@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "620949033231",
+    "project_id": "switch-cf287",
+    "storage_bucket": "switch-cf287.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:620949033231:android:66e332b0271e3707f6ae7a",
+        "android_client_info": {
+          "package_name": "com.adcapsule.app52switch"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVIuPR_p1q_jS1zZmo9HpOCJWiyOraogg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:620949033231:android:792f22ce07732b4ef6ae7a",
+        "android_client_info": {
+          "package_name": "com.adcapsule.backoffice52switch"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVIuPR_p1q_jS1zZmo9HpOCJWiyOraogg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
