@@ -33,6 +33,25 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
+  <!-- Firebase JS SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
+
+  <script>
+    // Your Firebase configuration, which is intended to be public
+    const firebaseConfig = {
+      apiKey: 'AIzaSyDyuOukmIzjhHkpiEpAYTv_XigTv3l6yiw',
+      appId: '1:620949033231:web:9187aba5cf05dc80f6ae7a',
+      messagingSenderId: '620949033231',
+      projectId: 'switch-cf287',
+      authDomain: 'switch-cf287.firebaseapp.com',
+      storageBucket: 'switch-cf287.firebasestorage.app',
+      measurementId: 'G-G29PR02FT4',
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
