@@ -35,8 +35,9 @@ class AuthScreenState extends State<AuthScreen> {
       // Query backend to validate Firebase UID and retrieve objectId
       print(uid);
       print(phone);
+
       final success = await _validateUidAndFetchObjectId(uid, phone);
-      if (success)return;
+      if (success) return;
       // Clear storage if validation fails
       await _storage.deleteAll();
       setState(() {
@@ -45,7 +46,6 @@ class AuthScreenState extends State<AuthScreen> {
     }
   }
 
-
   Future<bool> _validateUidAndFetchObjectId(String uid, String phone) async {
     final AuthService authService = AuthService();
     try {
@@ -53,6 +53,7 @@ class AuthScreenState extends State<AuthScreen> {
 
       if (result != null && result['objectId'] != null) {
         Constants.objectId = result['objectId'];
+        print(result['objectId']);
         //Constants.employeeName = result['employeeName'];
         if (mounted) {
           Navigator.pushReplacement(
@@ -88,7 +89,6 @@ class AuthScreenState extends State<AuthScreen> {
       verificationCompleted: (PhoneAuthCredential credential) async {
         await _auth.signInWithCredential(credential);
         await _fetchAndStoreUid(phoneNumber);
-
       },
       verificationFailed: (FirebaseAuthException e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -110,7 +110,6 @@ class AuthScreenState extends State<AuthScreen> {
   Future<void> _fetchAndStoreUid(String phoneNumber) async {
     final User? user = _auth.currentUser;
     if (user != null) {
-
       await _storage.write(key: 'firebaseUid', value: user.uid);
       await _storage.write(key: 'phoneNumber', value: phoneNumber);
 
@@ -123,7 +122,7 @@ class AuthScreenState extends State<AuthScreen> {
         });
         Future.delayed(Duration(seconds: 2), () async {
           final retrySuccess =
-            await _validateUidAndFetchObjectId(user.uid, phoneNumber);
+              await _validateUidAndFetchObjectId(user.uid, phoneNumber);
           if (!retrySuccess) {
             setState(() {
               _authStatusMessage = 'Validation failed. Please log in again.';
@@ -132,11 +131,8 @@ class AuthScreenState extends State<AuthScreen> {
           }
         });
       }
-
     }
   }
-  
-
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +149,7 @@ class AuthScreenState extends State<AuthScreen> {
                   labelText: 'Phone Number',
                   hintText: 'Enter phone number (e.g., 01012345678)',
                   errorText: _phoneController.text.isNotEmpty &&
-                      !_phoneController.text.startsWith('0')
+                          !_phoneController.text.startsWith('0')
                       ? 'Phone number must start with 0'
                       : null,
                 ),
