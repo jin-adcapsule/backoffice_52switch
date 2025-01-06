@@ -11,7 +11,7 @@ class Navigation extends StatefulWidget {
 }
 
 class NavigationState extends State<Navigation> {
-  final String objectId = Constants.objectId; // Use from config
+  final String employeeOid = Constants.employeeOid; // Use from config
   // Cache for storing created screens
   //final Map<String, Widget> _screenCache = {};
   final Map<String, Widget Function()> _screenCache = {};
@@ -52,7 +52,7 @@ class NavigationState extends State<Navigation> {
   @override
   Widget build(BuildContext context) {
     // Check if the platform is web or mobile
-    final isWeb = kIsWeb; // Returns true for web apps
+    const isWeb = kIsWeb; // Returns true for web apps
     final isLargeScreen =
         MediaQuery.of(context).size.width > 800; // Adjust breakpoint as needed
 

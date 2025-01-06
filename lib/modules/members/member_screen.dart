@@ -5,7 +5,7 @@ import 'package:backoffice52switch/utils/constants.dart'; // For app configurati
 
 // Public create function
 Widget createMemberScreen() {
-  return _MemberScreen();
+  return const _MemberScreen();
 }
 
 class _MemberScreen extends StatefulWidget {
@@ -23,14 +23,10 @@ class _MemberScreenState extends State<_MemberScreen> {
   Future<List<Employee>> _fetchMyAllGroupsMembers() async {
     try {
       final response = await _memberService
-          .fetchMyAllGroupsMembers(Constants.objectId //employeeOid
+          .fetchMyAllGroupsMembers(Constants.employeeOid //employeeOid
               );
-      if (response != null) {
-        return response;
-      } else {
-        throw Exception('response is null');
-      }
-    } catch (e) {
+      return response;
+        } catch (e) {
       throw Exception('Failed to fetch data: $e');
     }
   }

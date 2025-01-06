@@ -33,9 +33,9 @@ class MyApp extends StatelessWidget {
           Locale('en', 'US'), // English
           Locale('ko', 'KR'), // Korean
         ],
-        home: AuthScreen(),// Initial screen is LoginScreen
+        home: const AuthScreen(),// Initial screen is LoginScreen
         routes: {
-          '/login': (context) => AuthScreen(),
+          '/login': (context) => const AuthScreen(),
         },
       ),
     );

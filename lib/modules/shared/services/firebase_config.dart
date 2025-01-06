@@ -13,8 +13,7 @@ class FirebaseConfig {
     LoggerConfig().logger.i("Firebase initialized with DefaultFirebaseOptions.");
     if (EnvConfig.useEmulator){  // Initialize Firebase Emulator if required
       FirebaseAuth.instance.useAuthEmulator(EnvConfig.hostAddress, EnvConfig.emulatorPort);
-      print(EnvConfig.hostAddress);
-      print(EnvConfig.emulatorPort);
+
       }
   }
 }

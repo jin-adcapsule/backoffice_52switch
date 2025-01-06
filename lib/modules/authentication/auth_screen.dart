@@ -16,7 +16,7 @@ class AuthScreenState extends State<AuthScreen> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FlutterSecureStorage _storage = FlutterSecureStorage();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   String _verificationId = '';
   bool _isOtpSent = false;
@@ -33,8 +33,6 @@ class AuthScreenState extends State<AuthScreen> {
     String? phone = await _storage.read(key: 'phoneNumber');
     if (uid != null && phone != null) {
       // Query backend to validate Firebase UID and retrieve objectId
-      print(uid);
-      print(phone);
 
       final success = await _validateUidAndFetchObjectId(uid, phone);
       if (success) return;
@@ -51,9 +49,8 @@ class AuthScreenState extends State<AuthScreen> {
     try {
       final result = await authService.validateUidAndPhone(uid, phone);
 
-      if (result != null && result['objectId'] != null) {
-        Constants.objectId = result['objectId'];
-        print(result['objectId']);
+      if (result != null && result['employeeOid'] != null) {
+        Constants.employeeOid = result['employeeOid'];
         //Constants.employeeName = result['employeeName'];
         if (mounted) {
           Navigator.pushReplacement(
@@ -120,7 +117,7 @@ class AuthScreenState extends State<AuthScreen> {
         setState(() {
           _authStatusMessage = 'Validation failed due to a delay. Retrying...';
         });
-        Future.delayed(Duration(seconds: 2), () async {
+        Future.delayed(const Duration(seconds: 2), () async {
           final retrySuccess =
               await _validateUidAndFetchObjectId(user.uid, phoneNumber);
           if (!retrySuccess) {
@@ -137,7 +134,7 @@ class AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
+      appBar: AppBar(title: const Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -159,10 +156,10 @@ class AuthScreenState extends State<AuthScreen> {
             if (_isOtpSent)
               TextField(
                 controller: _otpController,
-                decoration: InputDecoration(labelText: 'OTP'),
+                decoration: const InputDecoration(labelText: 'OTP'),
                 keyboardType: TextInputType.number,
               ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             if (!_isOtpSent)
               ElevatedButton(
                 onPressed: () {
@@ -171,13 +168,13 @@ class AuthScreenState extends State<AuthScreen> {
                     _verifyPhoneNumber(_phoneController.text);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                           content: Text(
                               'Enter a valid phone number starting with 0')),
                     );
                   }
                 },
-                child: Text('Send OTP'),
+                child: const Text('Send OTP'),
               ),
             if (_isOtpSent)
               ElevatedButton(
@@ -194,14 +191,14 @@ class AuthScreenState extends State<AuthScreen> {
                     });
                   }
                 },
-                child: Text('Verify OTP'),
+                child: const Text('Verify OTP'),
               ),
             if (_authStatusMessage.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 20.0),
                 child: Text(
                   _authStatusMessage,
-                  style: TextStyle(color: Colors.red),
+                  style: const TextStyle(color: Colors.red),
                 ),
               ),
             if (_isOtpSent)
@@ -215,7 +212,7 @@ class AuthScreenState extends State<AuthScreen> {
                     _authStatusMessage = '';
                   });
                 },
-                child: Text('Restart Login Process'),
+                child: const Text('Restart Login Process'),
               ),
           ],
         ),

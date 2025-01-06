@@ -5,12 +5,28 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 
 class MemberService {
 // Fetch attendance status bool
-  Future<List<Employee>?> fetchMyAllGroupsMembers(String employeeOid) async {
-    final query = '''
+  Future<List<Employee>> fetchMyAllGroupsMembers(String employeeOid) async {
+    const query = '''
     query GetMyAllGroupsMembers(\$employeeOid: String!) {
       getMyAllGroupsMembers(employeeOid: \$employeeOid){
+        employeeId
         name
-      }
+        email
+        position
+        phone
+        joindate
+        department
+        supervisorName
+        supervisorId
+        isSupervisor
+        locationId
+        workplace
+        workhour
+        workhourOn
+        workhourOff
+        workhourHalf
+        dayoffRemaining
+      } 
     }
     ''';
 
@@ -29,20 +45,13 @@ class MemberService {
         LoggerConfig().logger.e('Query Exception: ${result.exception}');
         throw Exception("Failed to fetch: ${result.exception}");
       }
-
-      final data = result.data?['getMyAllGroupsMembers'];
-      print(data);
-      if (data != null) {
-        return data; // Return both success and status
-      } else {
-        LoggerConfig()
-            .logger
-            .e('Query Failed: No data returned.'); // If no data is returned
-        return null;
-      }
-    } catch (e) {
+      // Correctly map the result to a List<Employee>
+      final List<Employee> members = (result.data!['getMyAllGroupsMembers'] as List)
+      .map((e) => Employee.fromJson(e as Map<String, dynamic>))
+      .toList();
+return members;    } catch (e) {
       LoggerConfig().logger.e('Error in fetch: $e'); // If error occurs
-      return null;
+      return [];
     }
   }
 }

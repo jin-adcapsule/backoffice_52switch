@@ -13,7 +13,7 @@ class Constants {
   static final ValueNotifier<String> selectedKeyNotifier =
       ValueNotifier("members");
   //static int? employeeId; // Example: This can be loaded from an environment variable or a secure storage
-  static late String objectId; // Nullable until assigned after successful login
+  static late String employeeOid; // Nullable until assigned after successful login
   static late String
       employeeName; // Nullable until assigned after successful login
   static const String appName = "Admin52Switch";

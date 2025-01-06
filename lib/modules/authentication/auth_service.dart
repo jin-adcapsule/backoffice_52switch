@@ -47,11 +47,10 @@ class AuthService extends ChangeNotifier {
 
       final data = result.data?['validateUidAndPhone'];
       if (data != null) {
-        final objectId = data['objectId'];
         return {
-          'objectId': objectId,
-          'is_supervisor': data['isSupervisor'],
-          'currently_marked': data['currently_marked'],
+          'employeeOid': data['employeeOid'],
+          'isSupervisor': data['isSupervisor'],
+          'currentlyMarked': data['currentlyMarked'],
           'employeeName': data['employeeName']
         };
       } else {
