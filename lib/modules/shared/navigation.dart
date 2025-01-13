@@ -1,3 +1,4 @@
+import 'package:backoffice52switch/modules/groups/group_screen.dart';
 import 'package:flutter/foundation.dart'; // For platform detection
 import 'package:flutter/material.dart';
 import 'package:backoffice52switch/modules/members/member_screen.dart';
@@ -37,6 +38,9 @@ class NavigationState extends State<Navigation> {
     switch (selectedKey) {
       case 'members':
         screenFactory = () => createMemberScreen();
+        break;
+      case 'groups':
+        screenFactory = () => createGroupScreen();
         break;
       case 'requests':
         screenFactory = () => createRequestScreen();

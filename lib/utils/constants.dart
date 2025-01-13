@@ -13,7 +13,8 @@ class Constants {
   static final ValueNotifier<String> selectedKeyNotifier =
       ValueNotifier("members");
   //static int? employeeId; // Example: This can be loaded from an environment variable or a secure storage
-  static late String employeeOid; // Nullable until assigned after successful login
+  static late String
+      employeeOid; // Nullable until assigned after successful login
   static late String
       employeeName; // Nullable until assigned after successful login
   static const String appName = "Admin52Switch";
@@ -25,10 +26,18 @@ class Constants {
   static final List<Map<String, dynamic>> tabConfig = [
     {
       'label': '팀원관리',
-      'icon': Icons.people,
+      'icon': Icons.person,
       'key': 'members',
       'idx': 0,
       'appbarTitle': '팀원관리',
+      'colorPalette': [Colors.white, Colors.blue, Colors.black, Colors.black],
+    },
+    {
+      'label': '그룹관리',
+      'icon': Icons.group_add,
+      'key': 'groups',
+      'idx': 1,
+      'appbarTitle': '그룹관리',
       'colorPalette': [Colors.white, Colors.blue, Colors.black, Colors.black],
     },
     {
@@ -47,7 +56,6 @@ class Constants {
       'appbarTitle': '수퍼어드민',
       'colorPalette': [Colors.white, Colors.blue, Colors.black, Colors.black],
     },
-    
   ];
   static String getAppbarTitle(String selectedKey) {
     return tabConfig
