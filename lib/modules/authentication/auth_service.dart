@@ -20,9 +20,9 @@ class AuthService extends ChangeNotifier {
     const String query = '''
       query ValidateUidAndPhone(\$uid: String!, \$phone: String!) {
         validateUidAndPhone(uid: \$uid, phone: \$phone) {
-          objectId
+          employeeOid
           isSupervisor
-          currently_marked
+          currentlyMarked
           employeeName
         }
       }

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart'; // For platform detection
 import 'package:flutter/material.dart';
 import 'package:backoffice52switch/modules/members/member_screen.dart';
+import 'package:backoffice52switch/modules/requests/request_screen.dart';
 import 'package:backoffice52switch/utils/constants.dart'; // For app configuration
 
 class Navigation extends StatefulWidget {
@@ -36,6 +37,9 @@ class NavigationState extends State<Navigation> {
     switch (selectedKey) {
       case 'members':
         screenFactory = () => createMemberScreen();
+        break;
+      case 'requests':
+        screenFactory = () => createRequestScreen();
         break;
 
       default:

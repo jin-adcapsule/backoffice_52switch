@@ -34,35 +34,20 @@ class Constants {
     {
       'label': '신청관리',
       'icon': Icons.content_paste_search,
-      'key': 'dayoff',
+      'key': 'requests',
       'idx': 1,
       'appbarTitle': '신청관리',
       'colorPalette': [Colors.white, Colors.blue, Colors.black, Colors.black],
     },
     {
-      'label': '관리자',
+      'label': '수퍼어드민',
       'icon': Icons.admin_panel_settings,
       'key': 'supervisor',
       'idx': 2,
-      'appbarTitle': '팀원관리',
+      'appbarTitle': '수퍼어드민',
       'colorPalette': [Colors.white, Colors.blue, Colors.black, Colors.black],
     },
-    {
-      'label': '나의 정보',
-      'icon': Icons.person,
-      'key': 'myinfo',
-      'idx': 3,
-      'appbarTitle': '나의 정보',
-      'colorPalette': [Colors.white, Colors.blue, Colors.black, Colors.black],
-    },
-    {
-      'label': '더보기',
-      'icon': Icons.add_rounded,
-      'key': 'more',
-      'idx': 4,
-      'appbarTitle': '더보기',
-      'colorPalette': [Colors.white, Colors.blue, Colors.black, Colors.black],
-    },
+    
   ];
   static String getAppbarTitle(String selectedKey) {
     return tabConfig
