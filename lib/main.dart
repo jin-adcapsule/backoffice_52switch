@@ -8,6 +8,8 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   // Initialize Firebase
   await FirebaseConfig.loadFirebaseConfig();
+  
+  debugPrint = (String? message, {int? wrapWidth}) {};// Disable specific logs or errors here
   runApp(const MyApp());
 }
 

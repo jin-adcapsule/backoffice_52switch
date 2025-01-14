@@ -1,68 +1,54 @@
-//Employee model can handle the response from the GraphQL API.
 class Employee {
    String employeeOid;
-   int employeeId;
-   String name;
-   String position;
-   String department;
+   int employeeId; 
+   String name; 
    String email; 
-   String phone; 
-   String joindate; 
-   String supervisorName;
-   String supervisorOid; 
-   bool isSupervisor; 
-   String locationId; 
-   String workplace; 
-   String workhour; 
-   String workhourOn; 
-   String workhourOff; 
-   String workhourHalf; 
-
-   int? dayoffPerYear;
+   String position; 
+   String phone;
+   String joindate;
+   String groupId;
+   String locationId;
+   String dayoffPerYear;
 
   Employee({
     required this.employeeOid,
     required this.employeeId,
     required this.name,
+    required this.email,
     required this.position,
-    required this.department,
-    required this.email, 
-    required this.phone, 
-    required this.joindate, 
-    required this.supervisorName,
-    required this.supervisorOid, 
-    required this.isSupervisor, 
-    required this.locationId, 
-    required this.workplace, 
-    required this.workhour, 
-    required this.workhourOn,
-    required this.workhourOff,
-    required this.workhourHalf, 
+    required this.phone,
+    required this.joindate,
+    required this.groupId,
+    required this.locationId,
     required this.dayoffPerYear,
+   
   });
+// Convert Employee to Map
+  Map<String, dynamic> toJson() => {
+        'employeeOid': employeeOid,
+        'employeeId': employeeId,
+        'name': name,
+        'email': email,
+        'position': position,
+        'phone': phone,
+        'joindate': joindate,
+        'groupId': groupId,
+        'locationId': locationId,
+        'dayoffPerYear': dayoffPerYear,
 
+      };
   factory Employee.fromJson(Map<String, dynamic> json) {
     return Employee(
-      employeeOid: json['_id'],
-      employeeId: json['employeeId'] as int,
-      name: json['name'],
-      email: json['email'], // Ensure this is parsed
-      position: json['position'],
-      phone: json['phone'], // Ensure this is parsed
-      joindate: json['joindate'], // Ensure this is parsed
-
-      department: json['department'],
-      supervisorName: json['supervisorName'], // Ensure this is parsed
-      supervisorOid: json['supervisorOid'], // Ensure this is parsed
-      isSupervisor: json['isSupervisor'] as bool, // Ensure this is parsed
-
-      locationId: json['locationId'],
-      workplace: json['workplace'], // Ensure this is parsed
-      workhour: json['workhour'], // Ensure this is parsed
-      workhourOn: json['workhourOn'],
-      workhourOff: json['workhourOff'],
-      workhourHalf: json['workhourHalf'],
-      dayoffPerYear: json['dayoffPerYear'] as int?,
+      employeeOid: json['_id'] ?? '', // Default empty string if null
+      employeeId: json['employeeId'] ?? 0, // Default 0 if null
+      name: json['name'] ?? '', // Default empty string if null
+      email: json['email'] ?? '', // Default empty string if null
+      position: json['position'] ?? '', // Default empty string if null
+      phone: json['phone'] ?? '', // Default empty string if null
+      joindate: json['joindate'] ?? '', // Default empty string if null
+      groupId: json['groupId'] ?? '', // Default empty string if null
+      locationId: json['locationId'] ?? '', // Default empty string if null
+      dayoffPerYear: json['dayoffPerYear']?.toString() ?? '0', // Default '0' if null
 
     );
   }

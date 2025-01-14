@@ -1,13 +1,13 @@
 import 'dart:io';
 import 'package:backoffice52switch/modules/shared/models/group.dart';
-import 'package:backoffice52switch/modules/shared/models/groupMembers.dart';
+import 'package:backoffice52switch/modules/shared/dtos/groupMembers.dart';
 import 'package:backoffice52switch/modules/shared/models/location.dart';
 import 'package:backoffice52switch/modules/shared/services/global_service.dart';
 import 'package:flutter/foundation.dart'; // For kIsWeb
 import 'package:flutter/material.dart';
 import 'package:backoffice52switch/modules/members/member_service.dart';
 import 'package:backoffice52switch/modules/members/show_member_widget.dart';
-import 'package:backoffice52switch/modules/shared/models/employee.dart';
+import 'package:backoffice52switch/modules/shared/dtos/employeeDTO.dart';
 import 'package:backoffice52switch/utils/constants.dart'; // For app configuration
 
 // Public create function
@@ -55,15 +55,14 @@ class _MemberScreenState extends State<_MemberScreen> {
   Future<List<Location>> _fetchAllLocations() async {
     try {
       final response = await _globalService
-          .fetchAllLocations(Constants.employeeOid //employeeOid
-              );
+          .fetchAllLocations();
       return response;
     } catch (e) {
       throw Exception('Failed to fetch locations: $e');
     }
   }
 
-  void _showMemberinfo(BuildContext context, Employee member,
+  void _showMemberinfo(BuildContext context, EmployeeDTO member,
       List<Location> allLocations, List<Group> allMyGroups) {
     if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
       // Show as a popup dialog on web or desktop platforms

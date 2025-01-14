@@ -78,7 +78,7 @@ class NavigationState extends State<Navigation> {
               children: [
                 // Left Vertical Menu
                 Container(
-                  width: 250, // Set the width of the vertical menu
+                  width: MediaQuery.of(context).size.width * 0.1, // Set width as 20% of the screen width
                   color: Constants.getColor(ColorType.background),
                   child: Column(
                     children: [
@@ -128,10 +128,16 @@ class NavigationState extends State<Navigation> {
                     ],
                   ),
                 ),
-                // Main Content Area
-                Expanded(
-                  child: _getSelectedScreen(selectedKey),
+
+                // Main Content Area - Modified for scrolling
+                Expanded(  // Replace Container with Expanded
+                  child:_getSelectedScreen(selectedKey)
+                      
+                    
+                  
                 ),
+         
+                
               ],
             ),
           );

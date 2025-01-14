@@ -1,5 +1,3 @@
-//Employee model can handle the response from the GraphQL API.
-import 'package:backoffice52switch/modules/shared/models/employee.dart';
 
 class Location {
    String locationId;
@@ -16,7 +14,15 @@ class Location {
     required this.workhourHalf,
    
   });
+// Convert Employee to Map
+  Map<String, dynamic> toJson() => {
+        'locationId': locationId,
+        'workplace': workplace,
+        'workhourOn': workhourOn,
+        'workhourOff': workhourOff,
+        'workhourHalf': workhourHalf,
 
+      };
   factory Location.fromJson(Map<String, dynamic> json) {
     return Location(
       locationId: json['_id'],

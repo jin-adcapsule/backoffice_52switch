@@ -1,7 +1,7 @@
-import 'package:backoffice52switch/modules/shared/models/groupMembers.dart';
+import 'package:backoffice52switch/modules/shared/dtos/groupMembers.dart';
 import 'package:flutter/material.dart';
 import 'package:backoffice52switch/modules/members/member_service.dart';
-import 'package:backoffice52switch/modules/shared/models/employee.dart';
+import 'package:backoffice52switch/modules/shared/dtos/employeeDTO.dart';
 import 'package:backoffice52switch/utils/constants.dart'; // For app configuration
 
 // Public create function

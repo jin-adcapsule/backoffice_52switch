@@ -1,6 +1,3 @@
-//Employee model can handle the response from the GraphQL API.
-import 'package:backoffice52switch/modules/shared/models/employee.dart';
-
 class Group {
    String groupId;
    String groupName; 
@@ -14,7 +11,14 @@ class Group {
     required this.groupSupervisorOid,
    
   });
+// Convert Employee to Map
+  Map<String, dynamic> toJson() => {
+        'groupId': groupId,
+        'groupName': groupName,
+        'parentGroupId': parentGroupId,
+        'groupSupervisorOid': groupSupervisorOid,
 
+      };
   factory Group.fromJson(Map<String, dynamic> json) {
     return Group(
       groupId: json['_id'],

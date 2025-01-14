@@ -1,11 +1,11 @@
 import 'package:backoffice52switch/modules/shared/services/logger_config.dart';
 import 'package:backoffice52switch/modules/shared/services/graphql_service.dart'; // graphqlendpoint
-import 'package:backoffice52switch/modules/shared/models/employee.dart';
+import 'package:backoffice52switch/modules/shared/dtos/employeeDTO.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class RequestService {
 // Fetch attendance status bool
-  Future<List<Employee>> fetchMyAllGroupsMembers(String employeeOid) async {
+  Future<List<EmployeeDTO>> fetchMyAllGroupsMembers(String employeeOid) async {
     const query = '''
     query GetMyAllGroupsMembers(\$employeeOid: String!) {
       getMyAllGroupsMembers(employeeOid: \$employeeOid){
@@ -49,8 +49,8 @@ class RequestService {
         throw Exception("Failed to fetch: ${result.exception}");
       }
       // Correctly map the result to a List<Employee>
-      final List<Employee> members = (result.data!['getMyAllGroupsMembers'] as List)
-      .map((e) => Employee.fromJson(e as Map<String, dynamic>))
+      final List<EmployeeDTO> members = (result.data!['getMyAllGroupsMembers'] as List)
+      .map((e) => EmployeeDTO.fromJson(e as Map<String, dynamic>))
       .toList();
 return members;    } catch (e) {
       LoggerConfig().logger.e('Error in fetch: $e'); // If error occurs

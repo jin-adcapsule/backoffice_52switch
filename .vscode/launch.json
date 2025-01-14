@@ -1,0 +1,12 @@
+{
+    "configurations": [
+      {
+        "name": "Flutter",
+        "request": "launch",
+        "type": "flutter",
+        "flutterMode": "release", // This suppresses emulator warnings
+        "program": "lib/main.dart"
+      }
+    ]
+  }
+  

@@ -2,12 +2,12 @@ import 'package:backoffice52switch/modules/shared/models/group.dart';
 import 'package:backoffice52switch/modules/shared/models/location.dart';
 import 'package:flutter/material.dart';
 import 'package:backoffice52switch/modules/members/member_service.dart';
-import 'package:backoffice52switch/modules/shared/models/employee.dart';
+import 'package:backoffice52switch/modules/shared/dtos/employeeDTO.dart';
 import 'package:backoffice52switch/utils/constants.dart'; // For app configuration
 
 
 class ShowMemberWidget extends StatefulWidget {
-  final Employee member;
+  final EmployeeDTO member;
   final List<Location> allLocations;
   final List<Group> allMyGroups;
 

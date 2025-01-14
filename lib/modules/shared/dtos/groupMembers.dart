@@ -1,12 +1,12 @@
 //Employee model can handle the response from the GraphQL API.
-import 'package:backoffice52switch/modules/shared/models/employee.dart';
+import 'package:backoffice52switch/modules/shared/dtos/employeeDTO.dart';
 
 class GroupMembers {
    String groupId;
    String groupName; 
    String parentGroupId; 
    String groupSupervisorOid;
-   List<Employee> members; 
+   List<EmployeeDTO> members; 
 
   GroupMembers({
     required this.groupId,
@@ -24,7 +24,7 @@ class GroupMembers {
       parentGroupId: json['parentGroupId'],
       groupSupervisorOid: json['groupSupervisorOid'],
       members: (json['members'] as List) // Ensure this is parsed
-        .map((memberJson) => Employee.fromJson(memberJson)) // Parse each member
+        .map((memberJson) => EmployeeDTO.fromJson(memberJson)) // Parse each member
             .toList(),
 
     );

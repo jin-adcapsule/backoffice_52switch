@@ -1,5 +1,5 @@
 
-import 'package:backoffice52switch/modules/shared/models/groupMembers.dart';
+import 'package:backoffice52switch/modules/shared/dtos/groupMembers.dart';
 
 import 'package:backoffice52switch/modules/shared/services/logger_config.dart';
 import 'package:backoffice52switch/modules/shared/services/graphql_service.dart'; // graphqlendpoint
@@ -16,7 +16,8 @@ class MemberService {
         groupName
         parentGroupId
         groupSupervisorOid
-        members {_id
+        members {
+          employeeOid
           employeeId
           name
           email
@@ -57,6 +58,7 @@ class MemberService {
         LoggerConfig().logger.e('Query Exception: ${result.exception}');
         throw Exception("Failed to fetch: ${result.exception}");
       }
+      print(result.data!['getMyAllGroupsMembers']);
       // Correctly map the result to a List<Employee>
       final List<GroupMembers> members =
           (result.data!['getMyAllGroupsMembers'] as List)
