@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart'; // For platform detection
 import 'package:flutter/material.dart';
 import 'package:backoffice52switch/modules/members/member_screen.dart';
 import 'package:backoffice52switch/modules/requests/request_screen.dart';
+import 'package:backoffice52switch/modules/superadmin/super_admin_screen.dart';
 import 'package:backoffice52switch/utils/constants.dart'; // For app configuration
 
 class Navigation extends StatefulWidget {
@@ -45,7 +46,9 @@ class NavigationState extends State<Navigation> {
       case 'requests':
         screenFactory = () => createRequestScreen();
         break;
-
+      case 'superadmin':
+        screenFactory = () => createSuperAdminScreen();
+        break;
       default:
         screenFactory = () => createMemberScreen();
         break;

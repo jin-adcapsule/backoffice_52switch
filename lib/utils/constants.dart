@@ -51,7 +51,7 @@ class Constants {
     {
       'label': '수퍼어드민',
       'icon': Icons.admin_panel_settings,
-      'key': 'supervisor',
+      'key': 'superadmin',
       'idx': 2,
       'appbarTitle': '수퍼어드민',
       'colorPalette': [Colors.white, Colors.blue, Colors.black, Colors.black],

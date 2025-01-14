@@ -1,9 +1,9 @@
-import 'package:backoffice52switch/modules/shared/models/group.dart';
+
 import 'package:backoffice52switch/modules/shared/models/groupMembers.dart';
-import 'package:backoffice52switch/modules/shared/models/location.dart';
+
 import 'package:backoffice52switch/modules/shared/services/logger_config.dart';
 import 'package:backoffice52switch/modules/shared/services/graphql_service.dart'; // graphqlendpoint
-import 'package:backoffice52switch/modules/shared/models/employee.dart';
+
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class MemberService {
