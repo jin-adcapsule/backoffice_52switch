@@ -58,7 +58,7 @@ class MemberService {
         LoggerConfig().logger.e('Query Exception: ${result.exception}');
         throw Exception("Failed to fetch: ${result.exception}");
       }
-      print(result.data!['getMyAllGroupsMembers']);
+
       // Correctly map the result to a List<Employee>
       final List<GroupMembers> members =
           (result.data!['getMyAllGroupsMembers'] as List)

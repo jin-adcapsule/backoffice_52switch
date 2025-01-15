@@ -73,7 +73,7 @@ class GlobalService {
         LoggerConfig().logger.e('Query Exception: ${result.exception}');
         throw Exception("Failed to fetch: ${result.exception}");
       }
-      print(result.data!['getAllLocations']);
+
       final List<Location> locations = (result.data!['getAllLocations'] as List)
           .map((e) => Location.fromJson(e as Map<String, dynamic>))
           .toList();
@@ -95,7 +95,6 @@ class GlobalService {
         position
         phone
         joindate
-        department
         groupId 
         locationId
         dayoffPerYear
@@ -117,7 +116,7 @@ class GlobalService {
         LoggerConfig().logger.e('Query Exception: ${result.exception}');
         throw Exception("Failed to fetch: ${result.exception}");
       }
-      print(result.data!['getAllEmployees']);
+
       // Correctly map the result to a List<Employee>
       final List<Employee> employees = (result.data!['getAllEmployees'] as List)
           .map((e) => Employee.fromJson(e as Map<String, dynamic>))
@@ -160,7 +159,7 @@ class GlobalService {
         LoggerConfig().logger.e('Query Exception: ${result.exception}');
         throw Exception("Failed to fetch: ${result.exception}");
       }
-      print(result.data!['getAllDayoffs']);
+
       // Correctly map the result to a List<Employee>
       final List<Dayoff> dayoffs = (result.data!['getAllDayoffs'] as List)
           .map((e) => Dayoff.fromJson(e as Map<String, dynamic>))
@@ -201,7 +200,7 @@ class GlobalService {
         LoggerConfig().logger.e('Query Exception: ${result.exception}');
         throw Exception("Failed to fetch: ${result.exception}");
       }
-      print(result.data!['getAllAttendances']);
+
       // Correctly map the result to a List<Employee>
       final List<Attendance> attendances = (result.data!['getAllAttendances'] as List)
           .map((e) => Attendance.fromJson(e as Map<String, dynamic>))
@@ -239,7 +238,7 @@ class GlobalService {
         LoggerConfig().logger.e('Query Exception: ${result.exception}');
         throw Exception("Failed to fetch: ${result.exception}");
       }
-      print(result.data!['getAllGroups']);
+
       final List<Group> dayoffs = (result.data!['getAllGroups'] as List)
           .map((e) => Group.fromJson(e as Map<String, dynamic>))
           .toList();

@@ -62,73 +62,94 @@ class NavigationState extends State<Navigation> {
 //buildformat
   @override
   Widget build(BuildContext context) {
-    // Check if the platform is web or mobile
-    const isWeb = kIsWeb; // Returns true for web apps
-    final isLargeScreen =
-        MediaQuery.of(context).size.width > 800; // Adjust breakpoint as needed
+
+
+    const double menuExpandedSize =Constants.menuExpandedSize;
+    const double menuCollapsedSize =Constants.menuCollapsedSize;
+    final menuWidth = Constants.menuWidth; // Initial width of the menu
+
 
     return ValueListenableBuilder<String>(
       valueListenable: Constants.selectedKeyNotifier,
       builder: (context, selectedKey, child) {
         final tabs = getTabs();
         // For Web or Large Screens: Use Vertical Menu
-        if (isWeb || isLargeScreen) {
+        if (Constants.isWebOrDesktop) {
           return Scaffold(
             body: Row(
               children: [
                 // Left Vertical Menu
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.1, // Set width as 20% of the screen width
-                  color: Constants.getColor(ColorType.background),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          'Menu',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Constants.getColor(ColorType.selectedItem),
-                          ),
-                        ),
-                      ),
-                      Divider(
-                          color: Constants.getColor(ColorType.unselectedItem)),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: tabs.length,
-                          itemBuilder: (context, index) {
-                            final tab = tabs[index];
-                            final isSelected = tab['key'] == selectedKey;
-                            return ListTile(
-                              leading: Icon(
-                                tab['icon'],
-                                color: isSelected
-                                    ? Constants.getColor(ColorType.selectedItem)
-                                    : Constants.getColor(
-                                        ColorType.unselectedItem),
-                              ),
-                              title: Text(
-                                tab['label'],
-                                style: TextStyle(
-                                  color: isSelected
-                                      ? Constants.getColor(
-                                          ColorType.selectedItem)
-                                      : Constants.getColor(
-                                          ColorType.unselectedItem),
-                                ),
-                              ),
-                              selected: isSelected,
-                              onTap: () => _onItemTapped(tab['key']),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                ValueListenableBuilder<double>(
+                  valueListenable: menuWidth,
+                  builder: (context, width, child) {
+                    final isCollapsed = width == menuCollapsedSize; // Check if the menu is collapsed
 
+                    return Container(
+                      width: width, // Set width as 20% of the screen width
+                      color: Constants.getColor(ColorType.background),
+                      child: Column(
+                        children: [
+                          // Collapse/Expand Menu Item
+                          ListTile(
+                            leading: Icon(
+                              isCollapsed ? Icons.arrow_forward_ios : Icons.arrow_back_ios,
+                              color: Constants.getColor(ColorType.selectedItem),
+                            ),
+                            title: isCollapsed
+                                ? null // Hide text when collapsed
+                                : Text(
+                                    'Menu',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Constants.getColor(ColorType.selectedItem),
+                                    ),
+                                  ),
+                            onTap: () {
+                              // Toggle the menu width
+                              menuWidth.value =
+                                  isCollapsed ? menuExpandedSize : menuCollapsedSize;
+                            },
+                          ),
+                          Divider(color: Constants.getColor(ColorType.unselectedItem)),
+
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: tabs.length,
+                              itemBuilder: (context, index) {
+                                final tab = tabs[index];
+                                final isSelected = tab['key'] == selectedKey;
+                                return ListTile(
+                                  leading: Icon(
+                                    tab['icon'],
+                                    color: isSelected
+                                        ? Constants.getColor(ColorType.selectedItem)
+                                        : Constants.getColor(
+                                            ColorType.unselectedItem),
+                                  ),
+                                  title: isCollapsed
+                                    ? null // Hide text if the menu is collapsed
+                                    : Text(
+                                      tab['label'],
+                                      style: TextStyle(
+                                        color: isSelected
+                                            ? Constants.getColor(
+                                                ColorType.selectedItem)
+                                            : Constants.getColor(
+                                                ColorType.unselectedItem),
+                                      ),
+                                    ),
+                                  selected: isSelected,
+                                  onTap: () => _onItemTapped(tab['key']),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                ),
                 // Main Content Area - Modified for scrolling
                 Expanded(  // Replace Container with Expanded
                   child:_getSelectedScreen(selectedKey)

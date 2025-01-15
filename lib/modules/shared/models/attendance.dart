@@ -1,10 +1,12 @@
+
+
 import 'package:intl/intl.dart';
 class Attendance {
 
    String attendanceId;
    String employeeOid;
-   DateTime? checkInTime; //nullable
-   DateTime? checkOutTime; //nullable
+   int? checkInTime; // Nullable int
+   int? checkOutTime; // Nullable int
    String locationId; 
    bool status; 
 
@@ -28,13 +30,12 @@ class Attendance {
         'status': status
       };
   factory Attendance.fromJson(Map<String, dynamic> json) {
-    // Define a custom date format
-    final dateFormat = DateFormat("EEE MMM dd HH:mm:ss 'KST' yyyy");
+
     return Attendance(
       attendanceId: json['_id'],
       employeeOid: json['employeeOid'],
-      checkInTime: json['checkInTime'] != null ? dateFormat.parse(json['checkInTime']) : null,
-      checkOutTime: json['checkOutTime'] != null ? dateFormat.parse(json['checkOutTime']) : null,
+      checkInTime: json['checkInTime'] != null ? json['checkInTime'] as int : null,
+      checkOutTime: json['checkOutTime'] != null ? json['checkOutTime'] as int : null,
       locationId: json['locationId'],
       status: json['status'],
     );

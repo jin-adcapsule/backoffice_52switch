@@ -1,16 +1,17 @@
 import 'dart:ui';
 
-import 'package:backoffice52switch/modules/groups/group_service.dart';
+
 import 'package:backoffice52switch/modules/shared/models/attendance.dart';
 import 'package:backoffice52switch/modules/shared/models/dayoff.dart';
 import 'package:backoffice52switch/modules/shared/models/employee.dart';
 import 'package:backoffice52switch/modules/shared/models/group.dart';
 import 'package:backoffice52switch/modules/shared/models/location.dart';
 import 'package:backoffice52switch/modules/shared/services/global_service.dart';
+import 'package:backoffice52switch/modules/superadmin/show_record_widget.dart';
 import 'package:backoffice52switch/modules/superadmin/super_admin_service.dart';
 import 'package:flutter/material.dart';
 import 'package:backoffice52switch/utils/constants.dart';
-import 'package:graphview/GraphView.dart';
+
 
 // Public create function
 Widget createSuperAdminScreen() {
@@ -38,54 +39,66 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
 
   ///get a response for search from service
   Future<List<Map<String, dynamic>>> _fetchCollectionData(String collection) async {
-    
+    setState(() {
+      filteredData = [];  // Reset filtered data when collection changes
+    });
     try {
-                       
+      List<Map<String, dynamic>> response = [];                 
       if (collection == 'Employee') {
         final List<Employee> employees=await _globalService.fetchAllEmployees();
-        return employees.map((employee) => employee.toJson()).toList();
+        response = employees.map((employee) => employee.toJson()).toList();
       } else if (collection == 'Attendance') {
         final List<Attendance> attendances=await _globalService.fetchAllAttendances();
-        return attendances.map((attendance) => attendance.toJson()).toList();
+        response = attendances.map((attendance) => attendance.toJson()).toList();
       } else if (collection == 'Dayoff') {
         final List<Dayoff> dayoffs=await _globalService.fetchAllDayoffs();
-        return dayoffs.map((dayoff) => dayoff.toJson()).toList();
+        response = dayoffs.map((dayoff) => dayoff.toJson()).toList();
       } else if (collection == 'Group') {
         final List<Group> groups=await _globalService.fetchAllGroups();
-        return groups.map((group) => group.toJson()).toList();
+        response = groups.map((group) => group.toJson()).toList();
       } else if (collection == 'Location') {
         final List<Location> locations=await _globalService.fetchAllLocations();
-        return locations.map((location) => location.toJson()).toList();
-      } else{return [];}
-      //return response;
+        response = locations.map((location) => location.toJson()).toList();
+      }
+      setState(() {
+        originalData = response;  // Set the original data
+        filteredData = response;  // Set filtered data to the same as original initially
+      });
+      _filterData();// Apply filter immediately after data is fetched
+      return response;
     } catch (e) {
       throw Exception('Failed to fetch collections: $e');
     }
   }
-  void openEditDialog(Map<String, dynamic>? record) {
+
+  void openEditDialog(BuildContext context, Map<String, dynamic>? record,String collectionKey) {
+    if (Constants.isWebOrDesktop) {
+      // Show as a popup dialog on web or desktop platforms
       showDialog(
         context: context,
-        builder: (context) {
+        builder: (BuildContext context) {
           return AlertDialog(
-            title: Text(record == null ? 'Add Record' : 'Edit Record'),
-            content: const Text('Build your form here.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),  
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // Handle save logic
-                  Navigator.pop(context);
-                },
-                child: const Text('Save'),
-              ),
-            ],
+            content: ShowRecordWidget(
+              record: record, 
+              collectionKey: collectionKey,
+            ),
+          );
+        },
+      );
+    } else {
+      // Show as a bottom sheet on mobile platforms
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return ShowRecordWidget(
+            record: record,
+            collectionKey: collectionKey,
           );
         },
       );
     }
+  }
   @override
   void initState() {
     super.initState();
@@ -94,6 +107,7 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
   }
 // Filter the data based on the search query
   void _filterData() {
+    
     final query = _searchController.text.toLowerCase();
     // Check if the query is not empty and filter accordingly
     if (query.isEmpty) {
@@ -131,16 +145,20 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
               Constants.getAppbarTitle(Constants.selectedKeyNotifier.value),
               style: TextStyle(color: Constants.getColor(ColorType.text)))),
       body: Column(
+        crossAxisAlignment: Constants.isWebOrDesktop ? CrossAxisAlignment.start : CrossAxisAlignment.center, // Adjust alignment
         children: [
-          // Search input field
-          Padding(
+          Padding(// Search input field
             padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                labelText: 'Search',
-                border: OutlineInputBorder(),
-                suffixIcon: Icon(Icons.search),
+            child: Container(
+              width: Constants.isWebOrDesktop ? 200 : double.infinity, // Adjust width based on platform (web vs mobile)
+              child:TextField(
+                controller: _searchController,
+                textAlign: Constants.isWebOrDesktop ? TextAlign.start : TextAlign.center, // Align text to start for web
+                decoration: const InputDecoration(
+                  labelText: 'Search',
+                  border: OutlineInputBorder(),
+                  suffixIcon: Icon(Icons.search),
+                ),
               ),
             ),
           ),
@@ -181,9 +199,9 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
 
                     // Build DataTable with fetched data
                     final records = snapshot.data!;
-                    originalData = records;
+                    //originalData = records;
                     // Use filteredData instead of originalData in the DataTable
-                    final dataToDisplay = filteredData.isEmpty ? originalData : filteredData;
+                    final dataToDisplay = filteredData;//.isEmpty ? originalData : filteredData;
                     // Extract keys from the first record for column headers
                     final columns = records.first.keys.toList();
                     return DataTable(
@@ -206,7 +224,7 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
                               children: [
                                 IconButton(
                                   icon: const Icon(Icons.edit),
-                                  onPressed: () => openEditDialog(record),
+                                  onPressed: () => openEditDialog(context,record,selectedCollection),
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.delete),

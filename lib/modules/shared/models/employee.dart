@@ -8,7 +8,7 @@ class Employee {
    String joindate;
    String groupId;
    String locationId;
-   String dayoffPerYear;
+   int dayoffPerYear;
 
   Employee({
     required this.employeeOid,
@@ -48,7 +48,7 @@ class Employee {
       joindate: json['joindate'] ?? '', // Default empty string if null
       groupId: json['groupId'] ?? '', // Default empty string if null
       locationId: json['locationId'] ?? '', // Default empty string if null
-      dayoffPerYear: json['dayoffPerYear']?.toString() ?? '0', // Default '0' if null
+      dayoffPerYear: json['dayoffPerYear'] ?? 0, // Default '0' if null
 
     );
   }

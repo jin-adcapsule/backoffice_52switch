@@ -2,37 +2,58 @@ import 'package:backoffice52switch/modules/shared/services/logger_config.dart';
 import 'package:backoffice52switch/modules/shared/services/graphql_service.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 class SuperAdminService {
-  // Fetch attendance status bool
-  Future<List<Map<String, dynamic>>> fetchCollectionData(String collection) async {
-    const query = '''
-    query GetCollectionData(\$collection: String!) {
-      getCollectionData(collection: \$collection){
-        
-      } 
+  // update employees
+  Future<bool> updateEmployee(updatedData) async {
+    const mutation  = '''
+    mutation UpdateEmployee(\$employeeOid: String!, \$employeeInput: EmployeeInput!) {
+    updateEmployee(employeeOid: \$employeeOid, employeeInput: \$employeeInput) 
     }
     ''';
 
-    final variables = {
-      'collection': collection,
-    };
+    // Dynamically build the employeeInput by only including fields that have been updated
+    final Map<String, dynamic> employeeInput = {};
 
-    ///employee response to date with exception handling
+    if (updatedData['employeeId'] != null) employeeInput['employeeId'] = updatedData['employeeId'];
+    if (updatedData['name'] != null) employeeInput['name'] = updatedData['name'];
+    if (updatedData['email'] != null) employeeInput['email'] = updatedData['email'];
+    if (updatedData['position'] != null) employeeInput['position'] = updatedData['position'];
+    if (updatedData['phone'] != null) employeeInput['phone'] = updatedData['phone'];
+    if (updatedData['joindate'] != null) employeeInput['joindate'] = updatedData['joindate'];
+    if (updatedData['groupId'] != null) employeeInput['groupId'] = updatedData['groupId'];
+    if (updatedData['locationId'] != null) employeeInput['locationId'] = updatedData['locationId'];
+    if (updatedData['dayoffPerYear'] != null) employeeInput['dayoffPerYear'] = updatedData['dayoffPerYear'];
+
+    // Prepare the variables needed for the mutation
+    final variables = {
+    'employeeOid': updatedData['employeeOid'],  // The unique identifier for the employee
+    'employeeInput': employeeInput,       // The input with only updated fields
+  };
     try {
-      final result = await GraphQLService.query(
-        query,
-        variables: variables,
+      // Perform the GraphQL query with the specified fetch policy
+      final result = await GraphQLService.mutate(
+        mutation,
+        variables: variables, // Add variables if required
         fetchPolicy: FetchPolicy.networkOnly, // Force network fetch
       );
-      if (result.hasException) {
-        LoggerConfig().logger.e('Query Exception: ${result.exception}');
-        throw Exception("Failed to fetch: ${result.exception}");
-      }
-      final data =result.data?['getCollectionData'];
 
-      return data;
+      // Check if the result contains exceptions
+      if (result.hasException) {
+        LoggerConfig().logger.e('Mutation  Exception: ${result.exception}');
+        throw Exception("Failed to update employee: ${result.exception}");
+      }
+      // Assuming that the GraphQL mutation returns a boolean value directly
+      String responseString = result.data?['updateEmployee'] ?? 'false';  // Defaulting to 'false' if null
+
+
+      // Convert the String response to a boolean
+      bool response = responseString.toLowerCase() == 'true';  // 'true' as string maps to true in Dart
+
+      print('$responseString');  // Prints true or false based on the mutation result
+      return response;
     } catch (e) {
-      LoggerConfig().logger.e('Error in fetch: $e'); // If error occurs
-      return [];
+      // Log any error that occurs during the fetch
+      LoggerConfig().logger.e('Error in update: $e'); // If error occurs
+      throw Exception("Error updating employee: $e");
     }
   }
 }
