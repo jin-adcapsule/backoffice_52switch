@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 
+import 'package:backoffice52switch/modules/shared/dtos/indexDTO.dart';
 import 'package:backoffice52switch/modules/shared/models/attendance.dart';
 import 'package:backoffice52switch/modules/shared/models/dayoff.dart';
 import 'package:backoffice52switch/modules/shared/models/employee.dart';
@@ -35,7 +36,14 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
   List<String> filteredCollections = [];
   List<Map<String, dynamic>> records = [];
   late Future<List<Map<String,dynamic>>> _futureData;
-  TextEditingController _searchController = TextEditingController();
+  late Future<List<IndexDTO>> _indexData;
+  List<IndexDTO> indexData = []; // Store index data after it's fetched
+  final TextEditingController _searchController = TextEditingController();
+  late Map<String, dynamic> collectionInfoMap;//selected Collection Info
+  List<Map<String, dynamic>> collectionInfoMapList=Constants.collectionConfig;
+
+
+
 
   ///get a response for search from service
   Future<List<Map<String, dynamic>>> _fetchCollectionData(String collection) async {
@@ -70,8 +78,18 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
       throw Exception('Failed to fetch collections: $e');
     }
   }
+  ///get a response for search from service
+  Future<List<IndexDTO>> _fetchAllIndexData() async {
+    try{  
+      final List<IndexDTO> indexes= await _superAdminService.fetchAllIndexData();
+        //response = employees.map((employee) => employee.toJson()).toList();
+      return indexes;
+    } catch (e) {
+      throw Exception('Failed to fetch index: $e');
+    }
+  }
 
-  void openEditDialog(BuildContext context, Map<String, dynamic>? record,String collectionKey) {
+  void openEditDialog(BuildContext context, Map<String, dynamic>? record,String collectionKey,Map<String,dynamic>collectionInfoMap,List<IndexDTO> indexData) {
     if (Constants.isWebOrDesktop) {
       // Show as a popup dialog on web or desktop platforms
       showDialog(
@@ -81,10 +99,15 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
             content: ShowRecordWidget(
               record: record, 
               collectionKey: collectionKey,
+              collectionInfoMap:collectionInfoMap,
+              indexData:indexData,
             ),
           );
         },
-      );
+      ).then((_) {
+      // After closing the dialog, re-fetch the collection data
+      _fetchCollectionData(selectedCollection);
+    });
     } else {
       // Show as a bottom sheet on mobile platforms
       showModalBottomSheet(
@@ -94,16 +117,46 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
           return ShowRecordWidget(
             record: record,
             collectionKey: collectionKey,
+            collectionInfoMap:collectionInfoMap,
+            indexData:indexData
           );
         },
-      );
+      ).then((_) {
+      // After closing the dialog, re-fetch the collection data
+      _fetchCollectionData(selectedCollection);
+    });
     }
+  }
+  void getCollectionInfoMap(String selectedCollection){    
+    collectionInfoMap =collectionInfoMapList.firstWhere(
+      (map) => map['collection'] == selectedCollection
+    );
+    }
+    // Function to get the indexShowValue for a given indexKey and indexValue
+  String getIndexShowValue( String indexKey, String indexValue) {
+    // Check if the indexKey is in refIdKeyConverter and update if necessary
+    if (Constants.refIdKeyConverter.containsKey(indexKey)) {
+      indexKey = Constants.refIdKeyConverter[indexKey].toString();
+    }
+      final result = indexData.firstWhere(
+      (indexDTO) =>  indexDTO.indexKey == indexKey && indexDTO.indexValue == indexValue,
+      orElse: () => IndexDTO(collection: '', indexKey: '', indexValue: '', indexShowKey: '', indexShowValue: 'Unknown')
+    );
+    return result.indexShowValue;
   }
   @override
   void initState() {
     super.initState();
     _futureData = _fetchCollectionData(selectedCollection);
-     _searchController.addListener(_filterData);  // Filter data on search input change
+    getCollectionInfoMap(selectedCollection);
+    _indexData = _fetchAllIndexData();
+     _indexData.then((data) {
+      setState(() {
+        indexData = data; // Save the data to the state after fetching
+      });
+    });
+
+    _searchController.addListener(_filterData);  // Filter data on search input change
   }
 // Filter the data based on the search query
   void _filterData() {
@@ -155,7 +208,7 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
                 controller: _searchController,
                 textAlign: Constants.isWebOrDesktop ? TextAlign.start : TextAlign.center, // Align text to start for web
                 decoration: const InputDecoration(
-                  labelText: 'Search',
+                  labelText: '키워드 검색',
                   border: OutlineInputBorder(),
                   suffixIcon: Icon(Icons.search),
                 ),
@@ -171,12 +224,15 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
                 setState(() {
                   selectedCollection = value!;
                   _futureData = _fetchCollectionData(selectedCollection);
+                  getCollectionInfoMap(selectedCollection);
                 });
               },
-              items: ['Employee', 'Attendance', 'Dayoff', 'Group','Location']
-                  .map((collection) =>
-                      DropdownMenuItem(value: collection, child: Text(collection)))
-                  .toList(),
+              items: collectionInfoMapList.map((collection) {
+                return DropdownMenuItem<String>(
+                  value: collection['collection'],  // The actual collection value
+                  child: Text(collection['label']),  // Display label in the dropdown
+                );
+              }).toList(),
             )
           ),
 
@@ -214,7 +270,12 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
                       rows: dataToDisplay.map((record) {
                         // Ensure the row has the same number of cells as columns
                         final rowCells = columns.map((key) {
-                          return DataCell(Text(record[key]?.toString() ?? ''));
+                           if (collectionInfoMap['keyTypeMap'].containsKey(key)&& collectionInfoMap['keyTypeMap'][key] == 'refId') {
+                                // Replace groupId or locationId.... with the corresponding show value
+                                return DataCell(Text(getIndexShowValue(key,record[key])));
+                              } else {
+                                return DataCell(Text(record[key]?.toString() ?? ''));
+                              }
                         }).toList();
 
                         // Add the Actions cell to each row
@@ -224,7 +285,7 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
                               children: [
                                 IconButton(
                                   icon: const Icon(Icons.edit),
-                                  onPressed: () => openEditDialog(context,record,selectedCollection),
+                                  onPressed: () => openEditDialog(context,record,selectedCollection,collectionInfoMap,indexData),
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.delete),

@@ -5,14 +5,16 @@ class Attendance {
 
    String attendanceId;
    String employeeOid;
-   int? checkInTime; // Nullable int
-   int? checkOutTime; // Nullable int
+   String date;
+   int? checkInTime; // Nullable int// Store as int (Long equivalent in Dart)
+   int? checkOutTime; // Nullable int// Store as int (Long equivalent in Dart)
    String locationId; 
    bool status; 
 
 
   Attendance({
     required this.attendanceId,
+    required this.date,
     required this.employeeOid,
     required this.checkInTime,
     required this.checkOutTime,
@@ -23,6 +25,7 @@ class Attendance {
 // Convert Employee to Map
   Map<String, dynamic> toJson() => {
         'attendanceId': attendanceId,
+        'date': date,
         'employeeOid': employeeOid,
         'checkInTime': checkInTime,
         'checkOutTime': checkOutTime,
@@ -32,12 +35,17 @@ class Attendance {
   factory Attendance.fromJson(Map<String, dynamic> json) {
 
     return Attendance(
-      attendanceId: json['_id'],
-      employeeOid: json['employeeOid'],
-      checkInTime: json['checkInTime'] != null ? json['checkInTime'] as int : null,
-      checkOutTime: json['checkOutTime'] != null ? json['checkOutTime'] as int : null,
-      locationId: json['locationId'],
-      status: json['status'],
+      attendanceId: json['_id']as String,
+      date: json['date']as String,
+      employeeOid: json['employeeOid']as String,
+      checkInTime: json['checkInTime'] != null 
+          ? int.parse(json['checkInTime'].toString()) // Convert String to int
+          : null,  // Handle null
+      checkOutTime: json['checkOutTime'] != null 
+          ? int.parse(json['checkOutTime'].toString()) // Convert String to int
+          : null,  // Handle null
+      locationId: json['locationId']as String,
+      status: json['status'] as bool,
     );
   }
 }

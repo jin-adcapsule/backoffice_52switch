@@ -113,48 +113,64 @@ class Constants {
   }
 
 
-  // Fixed tab indices for DB collection
 
+  static final Map<String,String> refIdKeyConverter=
+    {
+      'groupSupervisorOid':'employeeOid',
+      'parentGroupId':'groupId',
+      'supervisorOid':'employeeOid',
+
+    };
   static final List<Map<String, dynamic>> collectionConfig = [
     {
-      'label': '팀원관리',
-      'icon': Icons.person,
-      'key': 'Employee',
+      'label': '직원',
+      'collection': 'Employee',
+      'idxKey':'employeeOid',
+      'idxShowKey':'name',
       'idx': 0,
-      'appbarTitle': '팀원관리',
-      'colorPalette': [Colors.white, Colors.blue, Colors.black, Colors.black],
+      'keyTypeMap':{'joinDate':'strDate','groupId':'refId','locationId':'refId'},//default standart String or int // refId:dropdownselect // 
+      'disabledKeys': ['employeeOid'],
+      'uniqueKeys':['employeeOid','employeeId','email','phone']
     },
     {
-      'label': '그룹관리',
-      'icon': Icons.group_add,
-      'key': 'Attendance',
+      'label': '출석',
+      'collection': 'Attendance',
+      'idxKey':'attendanceId',
+      'idxShowKey':'attendanceId',
       'idx': 1,
-      'appbarTitle': '그룹관리',
-      'colorPalette': [Colors.white, Colors.blue, Colors.black, Colors.black],
+      'keyTypeMap':{'date':'strDate','employeeOid':'refId','locationId':'refId','status':'bool','checkInTime':'longDateTime','checkOutTime':'longDateTime'},//default standart String or int // refId:dropdownselect // 
+      'disabledKeys': ['attendanceId'],
+      'uniqueKeys':['attendanceId']
     },
     {
-      'label': '신청관리',
-      'icon': Icons.content_paste_search,
-      'key': 'Dayoff',
-      'idx': 1,
-      'appbarTitle': '신청관리',
-      'colorPalette': [Colors.white, Colors.blue, Colors.black, Colors.black],
-    },
-    {
-      'label': '수퍼어드민',
-      'icon': Icons.admin_panel_settings,
-      'key': 'Group',
+      'label': '휴가',
+      'collection': 'Dayoff',
+      'idxKey':'dayoffId',
+      'idxShowKey':'dayoffId',
       'idx': 2,
-      'appbarTitle': '수퍼어드민',
-      'colorPalette': [Colors.white, Colors.blue, Colors.black, Colors.black],
+      'keyTypeMap':{'date':'strDate','employeeOid':'refId','groupId':'refId','locationId':'refId','supervisorOid':'refId'},//default standart String or int // refId:dropdownselect // 
+      'disabledKeys': ['dayoffId','requestKey','employeeOid'],
+      'uniqueKeys':['dayoffId']
     },
     {
-      'label': '수퍼어드민',
-      'icon': Icons.admin_panel_settings,
-      'key': 'Location',
-      'idx': 2,
-      'appbarTitle': '수퍼어드민',
-      'colorPalette': [Colors.white, Colors.blue, Colors.black, Colors.black],
+      'label': '그룹',
+      'collection': 'Group',
+      'idxKey':'groupId',
+      'idxShowKey':'groupName',
+      'idx': 3,
+      'keyTypeMap':{'parentGroupId':'refId','groupSupervisorOid':'refId'},//default standart String or int // refId:dropdownselect // 
+      'disabledKeys': ['groupId'],
+      'uniqueKeys':['groupId','groupName']
+    },
+    {
+      'label': '근무지',
+      'collection': 'Location',
+      'idxKey':'locationId',
+      'idxShowKey':'workplace',
+      'idx': 4,
+      'keyTypeMap':{'workhourOn':'strTime','workhourOff':'strTime','workhourHalf':'strTime'},//default standart String or int // refId:dropdownselect // 
+      'disabledKeys': ['locationId'],
+      'uniqueKeys':['locationId','workplace']
     },
   ];
 }
