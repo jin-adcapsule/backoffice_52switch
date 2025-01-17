@@ -98,7 +98,6 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
           return AlertDialog(
             content: ShowRecordWidget(
               record: record, 
-              collectionKey: collectionKey,
               collectionInfoMap:collectionInfoMap,
               indexData:indexData,
             ),
@@ -116,7 +115,6 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
         builder: (BuildContext context) {
           return ShowRecordWidget(
             record: record,
-            collectionKey: collectionKey,
             collectionInfoMap:collectionInfoMap,
             indexData:indexData
           );

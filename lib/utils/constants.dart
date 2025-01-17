@@ -148,7 +148,7 @@ class Constants {
       'idxKey':'dayoffId',
       'idxShowKey':'dayoffId',
       'idx': 2,
-      'keyTypeMap':{'date':'strDate','employeeOid':'refId','groupId':'refId','locationId':'refId','supervisorOid':'refId'},//default standart String or int // refId:dropdownselect // 
+      'keyTypeMap':{'date':'strDate','employeeOid':'refId','supervisorOid':'refId'},//default standart String or int // refId:dropdownselect // 
       'disabledKeys': ['dayoffId','requestKey','employeeOid'],
       'uniqueKeys':['dayoffId']
     },

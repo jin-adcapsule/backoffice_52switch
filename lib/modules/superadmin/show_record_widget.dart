@@ -11,7 +11,6 @@ import 'package:backoffice52switch/utils/constants.dart'; // For app configurati
 
 class ShowRecordWidget extends StatefulWidget {
   final Map<String, dynamic>? record;
-  final String collectionKey;
   final Map<String,dynamic> collectionInfoMap;
   final List<IndexDTO> indexData;
   // final List<Location> allLocations;
@@ -20,7 +19,6 @@ class ShowRecordWidget extends StatefulWidget {
   const ShowRecordWidget(
     { 
       required this.record,
-      required this.collectionKey,
       required this.collectionInfoMap,
       required this.indexData,
       // required this.allLocations,
@@ -162,7 +160,7 @@ class _ShowRecordWidgetState extends State<ShowRecordWidget> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  updateRecord(changedData);
+                  _updateRecord(changedData);
                   Navigator.pop(context); // Close confirmation dialog
                 },
                 child: const Text('확인'),
@@ -179,11 +177,21 @@ class _ShowRecordWidgetState extends State<ShowRecordWidget> {
     }
   }
 
-  Future<void> updateRecord(Map<String, dynamic> changedData) async {
+  Future<void> _updateRecord(Map<String, dynamic> changedData) async {
     late bool success= false;
     // Call the update service here
-    if(widget.collectionKey=="Employee"){
-      success = await _superAdminService.updateEmployee(widget.record?[collectionInfoMap['idxKey']],changedData);
+    String collectionName = collectionInfoMap['collection'];
+    String collectionIndexKey = collectionInfoMap['idxKey'];
+    if(collectionName =="Employee"){
+      success = await _superAdminService.updateEmployee(widget.record?[collectionIndexKey],changedData);
+    } else if (collectionName =="Attendance"){
+      success = await _superAdminService.updateAttendance(widget.record?[collectionIndexKey],changedData);
+    }else if (collectionName =="Dayoff"){
+      success = await _superAdminService.updateDayoff(widget.record?[collectionIndexKey],changedData);
+    }else if (collectionName =="Group"){
+      success = await _superAdminService.updateGroup(widget.record?[collectionIndexKey],changedData);
+    }else if (collectionName =="Location"){
+      success = await _superAdminService.updateLocation(widget.record?[collectionIndexKey],changedData);
     }
     if (success) {
       // Handle successful update, e.g., show a success message
