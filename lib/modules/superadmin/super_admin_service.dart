@@ -2,10 +2,11 @@ import 'package:backoffice52switch/modules/shared/dtos/indexDTO.dart';
 import 'package:backoffice52switch/modules/shared/services/logger_config.dart';
 import 'package:backoffice52switch/modules/shared/services/graphql_service.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+
 class SuperAdminService {
   // update employees
   Future<List<IndexDTO>> fetchAllIndexData() async {
-    const query  = '''
+    const query = '''
     query GetAllIndexes {
       getAllIndexes{
         collection
@@ -16,7 +17,6 @@ class SuperAdminService {
       } 
     }
     ''';
-
 
     try {
       // Perform the GraphQL query with the specified fetch policy
@@ -31,7 +31,6 @@ class SuperAdminService {
         throw Exception("Failed to fetcb indexes: ${result.exception}");
       }
 
-      print(result.data!['getAllIndexes']);
       // Correctly map the result to a List<IndexDTO>
       final List<IndexDTO> indexDTO = (result.data!['getAllIndexes'] as List)
           .map((e) => IndexDTO.fromJson(e as Map<String, dynamic>))
@@ -43,10 +42,13 @@ class SuperAdminService {
       throw Exception("Error fetching indexes: $e");
     }
   }
+
   // General update function
-  Future<bool> updateEntity(String mutationName,String inputTypeName, Map<String, dynamic> variables) async {
+  Future<bool> updateEntity(String mutationName, String inputTypeName,
+      Map<String, dynamic> variables) async {
     // Ensure the mutationName is capitalized
-    String capitalizedMutationName = mutationName[0].toUpperCase() + mutationName.substring(1);
+    String capitalizedMutationName =
+        mutationName[0].toUpperCase() + mutationName.substring(1);
     // Dynamically construct the GraphQL mutation
     String mutation = '''
       mutation $capitalizedMutationName(\$id: String!, \$input: $inputTypeName!) {
@@ -63,7 +65,7 @@ class SuperAdminService {
       final result = await GraphQLService.mutate(
         mutation,
         variables: variablesToSend,
-        fetchPolicy: FetchPolicy.networkOnly,  // Always fetch from the network
+        fetchPolicy: FetchPolicy.networkOnly, // Always fetch from the network
       );
 
       // Check if there are any exceptions in the result
@@ -76,7 +78,7 @@ class SuperAdminService {
       String responseString = result.data?[mutationName] ?? 'false';
       bool response = responseString.toLowerCase() == 'success';
 
-      print('$responseString');  // Prints 'success' or 'failure'
+      // print('$responseString');  // Prints 'success' or 'failure'
       return response;
     } catch (e) {
       LoggerConfig().logger.e('Error in update: $e');
@@ -85,54 +87,61 @@ class SuperAdminService {
   }
 
   // Update employee function
-  Future<bool> updateEmployee(String employeeOid, Map<String, dynamic> employeeInput) async {
+  Future<bool> updateEmployee(
+      String employeeOid, Map<String, dynamic> employeeInput) async {
     final variables = {
       'id': employeeOid,
       'input': employeeInput,
     };
-   
-    return await updateEntity("updateEmployee", "EmployeeInput",variables);
+
+    return await updateEntity("updateEmployee", "EmployeeInput", variables);
   }
 
   // Update attendance function
-  Future<bool> updateAttendance(String attendanceId, Map<String, dynamic> attendanceInput) async {
+  Future<bool> updateAttendance(
+      String attendanceId, Map<String, dynamic> attendanceInput) async {
     final variables = {
       'id': attendanceId,
       'input': attendanceInput,
     };
-    return await updateEntity("updateAttendance","AttendanceInput", variables);
+    return await updateEntity("updateAttendance", "AttendanceInput", variables);
   }
 
   // Update dayoff function
-  Future<bool> updateDayoff(String dayoffId, Map<String, dynamic> dayoffInput) async {
+  Future<bool> updateDayoff(
+      String dayoffId, Map<String, dynamic> dayoffInput) async {
     final variables = {
       'id': dayoffId,
       'input': dayoffInput,
     };
-    return await updateEntity("updateDayoff","DayoffInput", variables);
+    return await updateEntity("updateDayoff", "DayoffInput", variables);
   }
-    // Update group function
-  Future<bool> updateGroup(String groupId, Map<String, dynamic> groupInput) async {
+
+  // Update group function
+  Future<bool> updateGroup(
+      String groupId, Map<String, dynamic> groupInput) async {
     final variables = {
       'id': groupId,
       'input': groupInput,
     };
-    return await updateEntity("updateGroup","GroupInput", variables);
+    return await updateEntity("updateGroup", "GroupInput", variables);
   }
-    // Update location function
-  Future<bool> updateLocation(String locationId, Map<String, dynamic> locationInput) async {
+
+  // Update location function
+  Future<bool> updateLocation(
+      String locationId, Map<String, dynamic> locationInput) async {
     final variables = {
       'id': locationId,
       'input': locationInput,
     };
-    return await updateEntity("updateLocation","LocationInput", variables);
+    return await updateEntity("updateLocation", "LocationInput", variables);
   }
 
   // // update employees
   // Future<bool> updateEmployee(String employeeOid,employeeInput) async {
   //   const mutation  = '''
   //   mutation UpdateEmployee(\$employeeOid: String!, \$employeeInput: EmployeeInput!) {
-  //   updateEmployee(employeeOid: \$employeeOid, employeeInput: \$employeeInput) 
+  //   updateEmployee(employeeOid: \$employeeOid, employeeInput: \$employeeInput)
   //   }
   //   ''';
 
@@ -170,7 +179,6 @@ class SuperAdminService {
   //     // Assuming that the GraphQL mutation returns a boolean value directly
   //     String responseString = result.data?['updateEmployee'] ?? 'false';  // Defaulting to 'false' if null
 
-
   //     // Convert the String response to a boolean
   //     bool response = responseString.toLowerCase() == 'success';  // 'true' as string maps to true in Dart
 
@@ -182,7 +190,4 @@ class SuperAdminService {
   //     throw Exception("Error updating employee: $e");
   //   }
   // }
-
-
- 
 }
