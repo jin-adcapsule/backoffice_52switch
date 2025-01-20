@@ -113,7 +113,7 @@ class Constants {
   }
 
 
-
+  static String initialSuperAdminCollection="Employee";
   static final Map<String,String> refIdKeyConverter=
     {
       'groupSupervisorOid':'employeeOid',
@@ -128,7 +128,18 @@ class Constants {
       'idxKey':'employeeOid',
       'idxShowKey':'name',
       'idx': 0,
-      'keyTypeMap':{'joinDate':'strDate','groupId':'refId','locationId':'refId'},//default standart String or int // refId:dropdownselect // 
+      'keyTypeMap':{
+        'employeeId': 'int',
+        'name': 'string',
+        'email': 'string',
+        'position': 'string',
+        'phone': 'string',
+        'dayoffPerYear': 'int',
+            
+        'joindate':'strDate',
+        'groupId':'refId',
+        'locationId':'refId',
+        },
       'disabledKeys': ['employeeOid'],
       'uniqueKeys':['employeeOid','employeeId','email','phone']
     },
@@ -138,7 +149,14 @@ class Constants {
       'idxKey':'attendanceId',
       'idxShowKey':'attendanceId',
       'idx': 1,
-      'keyTypeMap':{'date':'strDate','employeeOid':'refId','locationId':'refId','status':'bool','checkInTime':'longDateTime','checkOutTime':'longDateTime'},//default standart String or int // refId:dropdownselect // 
+      'keyTypeMap':{
+        'date':'strDate',
+        'employeeOid':'refId',
+        'locationId':'refId',
+        'status':'boolNullable',//null means holiday or dayoff
+        'checkInTime':'longDateTime',
+        'checkOutTime':'longDateTime'
+        },
       'disabledKeys': ['attendanceId'],
       'uniqueKeys':['attendanceId']
     },
@@ -148,9 +166,18 @@ class Constants {
       'idxKey':'dayoffId',
       'idxShowKey':'dayoffId',
       'idx': 2,
-      'keyTypeMap':{'date':'strDate','employeeOid':'refId','supervisorOid':'refId'},//default standart String or int // refId:dropdownselect // 
+      'keyTypeMap':{
+        'dayoffType': 'string',
+        'requestComment': 'string',
+        'requestStatus': 'string',
+        'requestDate': 'strDate',
+        'requestKey': 'string',
+        'dayoffDate':'strDate',
+        'employeeOid':'refId',
+        'supervisorOid':'string',
+        },
       'disabledKeys': ['dayoffId','requestKey','employeeOid'],
-      'uniqueKeys':['dayoffId']
+      'uniqueKeys':['dayoffId'],
     },
     {
       'label': '그룹',
@@ -158,7 +185,7 @@ class Constants {
       'idxKey':'groupId',
       'idxShowKey':'groupName',
       'idx': 3,
-      'keyTypeMap':{'parentGroupId':'refId','groupSupervisorOid':'refId'},//default standart String or int // refId:dropdownselect // 
+      'keyTypeMap':{'groupName': 'string','parentGroupId':'refId','groupSupervisorOid':'refId'},//default standart String or int // refId:dropdownselect // 
       'disabledKeys': ['groupId'],
       'uniqueKeys':['groupId','groupName']
     },
@@ -168,7 +195,7 @@ class Constants {
       'idxKey':'locationId',
       'idxShowKey':'workplace',
       'idx': 4,
-      'keyTypeMap':{'workhourOn':'strTime','workhourOff':'strTime','workhourHalf':'strTime'},//default standart String or int // refId:dropdownselect // 
+      'keyTypeMap':{ 'workplace': 'string','workhourOn':'strTime','workhourOff':'strTime','workhourHalf':'strTime'},//default standart String or int // refId:dropdownselect // 
       'disabledKeys': ['locationId'],
       'uniqueKeys':['locationId','workplace']
     },

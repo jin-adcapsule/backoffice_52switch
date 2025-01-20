@@ -42,7 +42,43 @@ class SuperAdminService {
       throw Exception("Error fetching indexes: $e");
     }
   }
+  // delete instance by id
+  Future<bool> deleteCollectionById(String collection,String id)async{
+    // Dynamically construct the GraphQL mutation
+    String mutation = '''
+      mutation Delete${collection}ById(\$id: String) {
+        delete${collection}ById(id: \$id)
+      }
+    ''';
+    // Prepare variables with the proper structure for GraphQL
+    Map<String, dynamic> variablesToSend = {
+      'id':id,
+    };
+    try {
+      // Perform the GraphQL mutation
+      final result = await GraphQLService.mutate(
+        mutation,
+        variables: variablesToSend,
+        fetchPolicy: FetchPolicy.networkOnly, // Always fetch from the network
+      );
 
+      // Check if there are any exceptions in the result
+      if (result.hasException) {
+        LoggerConfig().logger.e('Mutation Exception: ${result.exception}');
+        throw Exception("Failed to update entity: ${result.exception}");
+      }
+
+      // Assuming the mutation returns a 'success' string or similar response
+      bool response = result.data?["delete${collection}ById"] ?? false;
+      //bool response = responseString.toLowerCase() == 'success';
+
+      // print('$responseString');  // Prints 'success' or 'failure'
+      return response;
+    } catch (e) {
+      LoggerConfig().logger.e('Error in update: $e');
+      throw Exception("Error updating entity: $e");
+    }
+  }
   // General update function returning String 'success' on sucessful update and String with error details when failed 
   Future<String> updateEntity(String mutationName, String inputTypeName,
       Map<String, dynamic> variables) async {
@@ -51,7 +87,7 @@ class SuperAdminService {
         mutationName[0].toUpperCase() + mutationName.substring(1);
     // Dynamically construct the GraphQL mutation
     String mutation = '''
-      mutation $capitalizedMutationName(\$id: String!, \$input: $inputTypeName!) {
+      mutation $capitalizedMutationName(\$id: String, \$input: $inputTypeName!) {
         $mutationName(id: \$id, input: \$input)
       }
     ''';
@@ -88,48 +124,48 @@ class SuperAdminService {
 
   // Update employee function
   Future<String> updateEmployee(
-      String employeeOid, Map<String, dynamic> employeeInput) async {
+      String? employeeOid, Map<String, dynamic> employeeInput) async {
     final variables = {
       'id': employeeOid,
       'input': employeeInput,
     };
 
-    return await updateEntity("updateEmployee", "EmployeeInput", variables);
+    return await updateEntity("updateOrNewEmployee", "EmployeeInput", variables);
   }
   // Update attendance function
   Future<String> updateAttendance(
-      String attendanceId, Map<String, dynamic> attendanceInput) async {
+      String? attendanceId, Map<String, dynamic> attendanceInput) async {
     final variables = {
       'id': attendanceId,
       'input': attendanceInput,
     };
-    return await updateEntity("updateAttendance", "AttendanceInput", variables);
+    return await updateEntity("updateOrNewAttendance", "AttendanceInput", variables);
   }
   // Update dayoff function
   Future<String> updateDayoff(
-      String dayoffId, Map<String, dynamic> dayoffInput) async {
+      String? dayoffId, Map<String, dynamic> dayoffInput) async {
     final variables = {
       'id': dayoffId,
       'input': dayoffInput,
     };
-    return await updateEntity("updateDayoff", "DayoffInput", variables);
+    return await updateEntity("updateOrNewDayoff", "DayoffInput", variables);
   }
   // Update group function
   Future<String> updateGroup(
-      String groupId, Map<String, dynamic> groupInput) async {
+      String? groupId, Map<String, dynamic> groupInput) async {
     final variables = {
       'id': groupId,
       'input': groupInput,
     };
-    return await updateEntity("updateGroup", "GroupInput", variables);
+    return await updateEntity("updateOrNewGroup", "GroupInput", variables);
   }
   // Update location function
   Future<String> updateLocation(
-      String locationId, Map<String, dynamic> locationInput) async {
+      String? locationId, Map<String, dynamic> locationInput) async {
     final variables = {
       'id': locationId,
       'input': locationInput,
     };
-    return await updateEntity("updateLocation", "LocationInput", variables);
+    return await updateEntity("updateOrNewLocation", "LocationInput", variables);
   }
 }

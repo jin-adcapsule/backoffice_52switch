@@ -27,21 +27,46 @@ class _SuperAdminScreen extends StatefulWidget {
 class _SuperAdminScreenState extends State<_SuperAdminScreen> {
   final SuperAdminService _superAdminService = SuperAdminService();
   final GlobalService _globalService = GlobalService();
+  List<Map<String, dynamic>> collectionInfoMapList = Constants.collectionConfig;
+  String selectedCollection = Constants.initialSuperAdminCollection;
   List<Map<String, dynamic>> filteredData = [];
-  List<Map<String, dynamic>> originalData =
-      []; // This will hold the data for futureData
-  String selectedCollection = 'Employee';
-  List<String> filteredCollections = [];
+  List<Map<String, dynamic>> originalData =[]; 
   List<Map<String, dynamic>> records = [];
+  List<IndexDTO> indexData = []; // Store index data after it's fetched
+  late List<String> collections =[];
+
   late Future<List<Map<String, dynamic>>> _futureData;
   late Future<List<IndexDTO>> _indexData;
-  List<IndexDTO> indexData = []; // Store index data after it's fetched
+
   final TextEditingController _searchController = TextEditingController();
   late Map<String, dynamic> collectionInfoMap; //selected Collection Info
-  List<Map<String, dynamic>> collectionInfoMapList = Constants.collectionConfig;
-  // Extracting idxKey values from the collectionConfig list
-  List<String> collections = Constants.collectionConfig.map((config) => config['collection'] as String).toList();
 
+
+
+  void getCollectionInfoMap(String selectedCollection) {
+    collectionInfoMap = collectionInfoMapList
+        .firstWhere((map) => map['collection'] == selectedCollection);
+  }
+  void getCollections(){ // Extracting idxKey values from the collectionConfig list
+    collections = collectionInfoMapList.map((config) => config['collection'] as String).toList();
+    }
+  
+  @override
+  void initState() {
+    super.initState();
+    getCollectionInfoMap(selectedCollection);
+    getCollections();
+    _futureData = _fetchCollectionData(selectedCollection);
+    _indexData = _fetchAllIndexData();
+    _indexData.then((data) {
+      setState(() {
+        indexData = data; // Save the data to the state after fetching
+      });
+    });
+
+    _searchController
+        .addListener(_filterData); // Filter data on search input change
+  }
 
   ///get a response for search from service
   Future<List<Map<String, dynamic>>> _fetchCollectionData(
@@ -84,7 +109,13 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
       throw Exception('Failed to fetch collections: $e');
     }
   }
-
+  Future<void> _deleteCollectionById(String collection,String id)async{
+    bool response = false;
+    response = await _superAdminService.deleteCollectionById(collection, id);
+    if (response) {
+                  Navigator.of(context).pop();  // Close the dialog
+                } 
+  }
   List<Map<String, dynamic>> preprocessDataForSearch(//handle refId key value by embedding temporary column for show value as searchable   
       List<Map<String, dynamic>> data) {
     return data.map((record) {
@@ -134,9 +165,14 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
     if (Constants.isWebOrDesktop) {
       // Show as a popup dialog on web or desktop platforms
       showDialog(
+        
         context: context,
         builder: (BuildContext context) {
+          
           return AlertDialog(
+            title:  Text("${collectionInfoMap['label']} 데이터 수정",
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
             content: ShowRecordWidget(
               record: record,
               collectionInfoMap: collectionInfoMap,
@@ -166,10 +202,6 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
     }
   }
 
-  void getCollectionInfoMap(String selectedCollection) {
-    collectionInfoMap = collectionInfoMapList
-        .firstWhere((map) => map['collection'] == selectedCollection);
-  }
 
   // Function to get the indexShowValue for a given indexKey and indexValue
   String getIndexShowValue(String indexKey, String indexValue) {
@@ -189,21 +221,6 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
     return result.indexShowValue;
   }
 
-  @override
-  void initState() {
-    super.initState();
-    getCollectionInfoMap(selectedCollection);
-    _futureData = _fetchCollectionData(selectedCollection);
-    _indexData = _fetchAllIndexData();
-    _indexData.then((data) {
-      setState(() {
-        indexData = data; // Save the data to the state after fetching
-      });
-    });
-
-    _searchController
-        .addListener(_filterData); // Filter data on search input change
-  }
 
 // Filter the data based on the search query
   void _filterData() {
@@ -239,6 +256,82 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
       });
     }
   }
+  // Function to open the dialog for adding a new record
+  void openAddDialog(
+    BuildContext context,
+    String collectionKey,
+    Map<String, dynamic> collectionInfoMap,
+    List<IndexDTO> indexData) {
+      if (Constants.isWebOrDesktop) {
+        // Show as a popup dialog on web or desktop platforms
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title:  Text("${collectionInfoMap['label']} 데이터 생성",
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+              content: ShowRecordWidget(
+                record: null, // Passing null since it's a new record
+                collectionInfoMap: collectionInfoMap,
+                indexData: indexData,
+              ),
+            );
+          },
+        ).then((_) {
+          // After closing the dialog, re-fetch the collection data
+          _fetchCollectionData(selectedCollection);
+        });
+      } else {
+        // Show as a bottom sheet on mobile platforms
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          builder: (BuildContext context) {
+            return ShowRecordWidget(
+              record: null, // Passing null since it's a new record
+              collectionInfoMap: collectionInfoMap,
+              indexData: indexData,
+            );
+          },
+        ).then((_) {
+          // After closing the bottom sheet, re-fetch the collection data
+          _fetchCollectionData(selectedCollection);
+        });
+      }
+    }
+  void openDeleteDialog(BuildContext context, Map<String, dynamic> record) {
+    // Show a confirmation dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('삭제 확인'),
+          content: const Text('이 항목을 삭제하시겠습니까?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();  // Close the dialog
+              },
+              child: const Text('취소'),
+            ),
+            TextButton(
+              onPressed: () {
+                _deleteCollectionById(selectedCollection,record[collectionInfoMap['idxKey']]);  // Wait for the result of the delete operation
+                // Check if the deletion was successful
+                
+              },
+              child: const Text('삭제'),
+            ),
+          ],
+        );
+      },
+    ).then((_) {
+          // After closing the dialog, re-fetch the collection data
+          _fetchCollectionData(selectedCollection);
+    });
+  
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -259,54 +352,61 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
                     style:
                         TextStyle(color: Constants.getColor(ColorType.text)))),
             body: Column(
+              mainAxisAlignment: MainAxisAlignment.start, // Align items to the start of the row
                 crossAxisAlignment: Constants.isWebOrDesktop
                     ? CrossAxisAlignment.start
                     : CrossAxisAlignment.center, // Adjust alignment
                 children: [
-                  Padding(
-                    // Search input field
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      width: Constants.isWebOrDesktop
-                          ? 200
-                          : double
-                              .infinity, // Adjust width based on platform (web vs mobile)
-                      child: TextField(
-                        controller: _searchController,
-                        textAlign: Constants.isWebOrDesktop
-                            ? TextAlign.start
-                            : TextAlign.center, // Align text to start for web
-                        decoration: const InputDecoration(
-                          labelText: '키워드 검색',
-                          border: OutlineInputBorder(),
-                          suffixIcon: Icon(Icons.search),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween, // Space items between
+                    children:[
+                      
+                      // Dropdown to select a collection
+                      Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          
+                          child: DropdownButton<String>(
+                            value: selectedCollection,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedCollection = value!;
+                                _futureData =
+                                    _fetchCollectionData(selectedCollection);
+                                getCollectionInfoMap(selectedCollection);
+                              });
+                            },
+                            items: collectionInfoMapList.map((collection) {
+                              return DropdownMenuItem<String>(
+                                value: collection[
+                                    'collection'], // The actual collection value
+                                child: Text(collection[
+                                    'label']), // Display label in the dropdown
+                              );
+                            }).toList(),
+                          )),
+                      
+                      Padding(
+                        // Search input field
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          width: Constants.isWebOrDesktop
+                              ? 200
+                              : double
+                                  .infinity, // Adjust width based on platform (web vs mobile)
+                          child: TextField(
+                            controller: _searchController,
+                            textAlign: Constants.isWebOrDesktop
+                                ? TextAlign.start
+                                : TextAlign.center, // Align text to start for web
+                            decoration: const InputDecoration(
+                              labelText: '키워드 검색',
+                              border: OutlineInputBorder(),
+                              suffixIcon: Icon(Icons.search),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  // Dropdown to select a collection
-                  Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: DropdownButton<String>(
-                        value: selectedCollection,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedCollection = value!;
-                            _futureData =
-                                _fetchCollectionData(selectedCollection);
-                            getCollectionInfoMap(selectedCollection);
-                          });
-                        },
-                        items: collectionInfoMapList.map((collection) {
-                          return DropdownMenuItem<String>(
-                            value: collection[
-                                'collection'], // The actual collection value
-                            child: Text(collection[
-                                'label']), // Display label in the dropdown
-                          );
-                        }).toList(),
-                      )),
-
+                  ]),
                   // Data table in an Expanded widget to take remaining space
                   Expanded(
                     child: SingleChildScrollView(
@@ -387,9 +487,10 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
                                               ),
                                               IconButton(
                                                 icon: const Icon(Icons.delete),
-                                                onPressed: () {
-                                                  // Handle delete logic
-                                                },
+                                                onPressed: () => openDeleteDialog(
+                                                  context,
+                                                  record
+                                                  ),
                                               ),
                                             ],
                                           ),
@@ -403,6 +504,28 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
                         ),
                       ),
                     ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end, // Space items between
+                    children:[
+                      Positioned(
+                        bottom: 30, // Adjust as needed for margin from the bottom
+                        right: 16, // Adjust as needed for margin from the right
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                            onPressed: () => openAddDialog(
+                              context,
+                              selectedCollection,
+                              collectionInfoMap,
+                              indexData,
+                            ),
+                            child: const Text("+",
+                            style:  TextStyle(fontSize: 40),),
+                          ),
+                        ),
+                      ),
+                    ]
                   )
                 ])));
   }
