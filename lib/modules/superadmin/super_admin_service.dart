@@ -43,8 +43,8 @@ class SuperAdminService {
     }
   }
 
-  // General update function
-  Future<bool> updateEntity(String mutationName, String inputTypeName,
+  // General update function returning String 'success' on sucessful update and String with error details when failed 
+  Future<String> updateEntity(String mutationName, String inputTypeName,
       Map<String, dynamic> variables) async {
     // Ensure the mutationName is capitalized
     String capitalizedMutationName =
@@ -75,11 +75,11 @@ class SuperAdminService {
       }
 
       // Assuming the mutation returns a 'success' string or similar response
-      String responseString = result.data?[mutationName] ?? 'false';
-      bool response = responseString.toLowerCase() == 'success';
+      String responseString = result.data?[mutationName] ?? 'Update Failed: Server Error';
+      //bool response = responseString.toLowerCase() == 'success';
 
       // print('$responseString');  // Prints 'success' or 'failure'
-      return response;
+      return responseString;
     } catch (e) {
       LoggerConfig().logger.e('Error in update: $e');
       throw Exception("Error updating entity: $e");
@@ -87,7 +87,7 @@ class SuperAdminService {
   }
 
   // Update employee function
-  Future<bool> updateEmployee(
+  Future<String> updateEmployee(
       String employeeOid, Map<String, dynamic> employeeInput) async {
     final variables = {
       'id': employeeOid,
@@ -96,9 +96,8 @@ class SuperAdminService {
 
     return await updateEntity("updateEmployee", "EmployeeInput", variables);
   }
-
   // Update attendance function
-  Future<bool> updateAttendance(
+  Future<String> updateAttendance(
       String attendanceId, Map<String, dynamic> attendanceInput) async {
     final variables = {
       'id': attendanceId,
@@ -106,9 +105,8 @@ class SuperAdminService {
     };
     return await updateEntity("updateAttendance", "AttendanceInput", variables);
   }
-
   // Update dayoff function
-  Future<bool> updateDayoff(
+  Future<String> updateDayoff(
       String dayoffId, Map<String, dynamic> dayoffInput) async {
     final variables = {
       'id': dayoffId,
@@ -116,9 +114,8 @@ class SuperAdminService {
     };
     return await updateEntity("updateDayoff", "DayoffInput", variables);
   }
-
   // Update group function
-  Future<bool> updateGroup(
+  Future<String> updateGroup(
       String groupId, Map<String, dynamic> groupInput) async {
     final variables = {
       'id': groupId,
@@ -126,9 +123,8 @@ class SuperAdminService {
     };
     return await updateEntity("updateGroup", "GroupInput", variables);
   }
-
   // Update location function
-  Future<bool> updateLocation(
+  Future<String> updateLocation(
       String locationId, Map<String, dynamic> locationInput) async {
     final variables = {
       'id': locationId,
@@ -136,58 +132,4 @@ class SuperAdminService {
     };
     return await updateEntity("updateLocation", "LocationInput", variables);
   }
-
-  // // update employees
-  // Future<bool> updateEmployee(String employeeOid,employeeInput) async {
-  //   const mutation  = '''
-  //   mutation UpdateEmployee(\$employeeOid: String!, \$employeeInput: EmployeeInput!) {
-  //   updateEmployee(employeeOid: \$employeeOid, employeeInput: \$employeeInput)
-  //   }
-  //   ''';
-
-  //   // // Dynamically build the employeeInput by only including fields that have been updated
-  //   // final Map<String, dynamic> employeeInput = {};
-
-  //   // if (updatedData['employeeId'] != null) employeeInput['employeeId'] = updatedData['employeeId'];
-  //   // if (updatedData['name'] != null) employeeInput['name'] = updatedData['name'];
-  //   // if (updatedData['email'] != null) employeeInput['email'] = updatedData['email'];
-  //   // if (updatedData['position'] != null) employeeInput['position'] = updatedData['position'];
-  //   // if (updatedData['phone'] != null) employeeInput['phone'] = updatedData['phone'];
-  //   // if (updatedData['joindate'] != null) employeeInput['joindate'] = updatedData['joindate'];
-  //   // if (updatedData['groupId'] != null) employeeInput['groupId'] = updatedData['groupId'];
-  //   // if (updatedData['locationId'] != null) employeeInput['locationId'] = updatedData['locationId'];
-  //   // if (updatedData['dayoffPerYear'] != null) employeeInput['dayoffPerYear'] = updatedData['dayoffPerYear'];
-
-  //   // Prepare the variables needed for the mutation
-  //   final variables = {
-  //   'employeeOid': employeeOid,  // The unique identifier for the employee
-  //   'employeeInput': employeeInput,       // The input with only updated fields
-  // };
-  //   try {
-  //     // Perform the GraphQL query with the specified fetch policy
-  //     final result = await GraphQLService.mutate(
-  //       mutation,
-  //       variables: variables, // Add variables if required
-  //       fetchPolicy: FetchPolicy.networkOnly, // Force network fetch
-  //     );
-
-  //     // Check if the result contains exceptions
-  //     if (result.hasException) {
-  //       LoggerConfig().logger.e('Mutation  Exception: ${result.exception}');
-  //       throw Exception("Failed to update employee: ${result.exception}");
-  //     }
-  //     // Assuming that the GraphQL mutation returns a boolean value directly
-  //     String responseString = result.data?['updateEmployee'] ?? 'false';  // Defaulting to 'false' if null
-
-  //     // Convert the String response to a boolean
-  //     bool response = responseString.toLowerCase() == 'success';  // 'true' as string maps to true in Dart
-
-  //     print('$responseString');  // Prints true or false based on the mutation result
-  //     return response;
-  //   } catch (e) {
-  //     // Log any error that occurs during the fetch
-  //     LoggerConfig().logger.e('Error in update: $e'); // If error occurs
-  //     throw Exception("Error updating employee: $e");
-  //   }
-  // }
 }

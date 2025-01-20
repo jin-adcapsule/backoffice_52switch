@@ -31,13 +31,6 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
   List<Map<String, dynamic>> originalData =
       []; // This will hold the data for futureData
   String selectedCollection = 'Employee';
-  List<String> collections = [
-    'Employee',
-    'Attendance',
-    'Dayoff',
-    'Group',
-    'Location'
-  ];
   List<String> filteredCollections = [];
   List<Map<String, dynamic>> records = [];
   late Future<List<Map<String, dynamic>>> _futureData;
@@ -46,13 +39,16 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
   final TextEditingController _searchController = TextEditingController();
   late Map<String, dynamic> collectionInfoMap; //selected Collection Info
   List<Map<String, dynamic>> collectionInfoMapList = Constants.collectionConfig;
+  // Extracting idxKey values from the collectionConfig list
+  List<String> collections = Constants.collectionConfig.map((config) => config['collection'] as String).toList();
+
 
   ///get a response for search from service
   Future<List<Map<String, dynamic>>> _fetchCollectionData(
       String collection) async {
-    setState(() {
-      filteredData = []; // Reset filtered data when collection changes
-    });
+    // setState(() {
+    //   filteredData = []; // Reset filtered data when collection changes
+    // });
     try {
       List<Map<String, dynamic>> response = [];
       if (collection == 'Employee') {
@@ -89,7 +85,7 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
     }
   }
 
-  List<Map<String, dynamic>> preprocessDataForSearch(
+  List<Map<String, dynamic>> preprocessDataForSearch(//handle refId key value by embedding temporary column for show value as searchable   
       List<Map<String, dynamic>> data) {
     return data.map((record) {
       final updatedRecord = Map<String, dynamic>.from(record);
@@ -105,7 +101,7 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
     }).toList();
   }
 
-  List<Map<String, dynamic>> postProcessFilteredData(
+  List<Map<String, dynamic>> postProcessFilteredData(//after search delete temporarily generated column  
       List<Map<String, dynamic>> data) {
     return data.map((record) {
       final updatedRecord = Map<String, dynamic>.from(record);
@@ -247,7 +243,7 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        scrollBehavior: MaterialScrollBehavior().copyWith(
+        scrollBehavior: const MaterialScrollBehavior().copyWith(
           dragDevices: {
             PointerDeviceKind.mouse,
             PointerDeviceKind.touch,
@@ -326,11 +322,11 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
                                   child: CircularProgressIndicator());
                             } else if (snapshot.hasError) {
                               return Center(
-                                  child: Text('Error: ${snapshot.error}'));
+                                  child: Text('에러: ${snapshot.error}'));
                             } else if (!snapshot.hasData ||
                                 snapshot.data!.isEmpty) {
                               return const Center(
-                                  child: Text('No data available.'));
+                                  child: Text('데이터가 없습니다.'));
                             }
 
                             // Build DataTable with fetched data
@@ -338,8 +334,7 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
                             //originalData = records;
                             // Use filteredData instead of originalData in the DataTable
                             final dataToDisplay = filteredData;
-//                            filteredData.isEmpty ? records : filteredData;
-
+                            
                             // Extract keys from the first record for column headers
                             final columns = records.first.keys.toList();
                             List<String> columnsToDisplay = columns

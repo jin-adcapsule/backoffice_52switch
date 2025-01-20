@@ -178,33 +178,50 @@ class _ShowRecordWidgetState extends State<ShowRecordWidget> {
   }
 
   Future<void> _updateRecord(Map<String, dynamic> changedData) async {
-    late bool success= false;
+    late String responseString= "";
     // Call the update service here
     String collectionName = collectionInfoMap['collection'];
     String collectionIndexKey = collectionInfoMap['idxKey'];
     if(collectionName =="Employee"){
-      success = await _superAdminService.updateEmployee(widget.record?[collectionIndexKey],changedData);
+      responseString = await _superAdminService.updateEmployee(widget.record?[collectionIndexKey],changedData);
     } else if (collectionName =="Attendance"){
-      success = await _superAdminService.updateAttendance(widget.record?[collectionIndexKey],changedData);
+      responseString = await _superAdminService.updateAttendance(widget.record?[collectionIndexKey],changedData);
     }else if (collectionName =="Dayoff"){
-      success = await _superAdminService.updateDayoff(widget.record?[collectionIndexKey],changedData);
+      responseString = await _superAdminService.updateDayoff(widget.record?[collectionIndexKey],changedData);
     }else if (collectionName =="Group"){
-      success = await _superAdminService.updateGroup(widget.record?[collectionIndexKey],changedData);
+      responseString = await _superAdminService.updateGroup(widget.record?[collectionIndexKey],changedData);
     }else if (collectionName =="Location"){
-      success = await _superAdminService.updateLocation(widget.record?[collectionIndexKey],changedData);
+      responseString = await _superAdminService.updateLocation(widget.record?[collectionIndexKey],changedData);
     }
-    if (success) {
+    if (responseString=="success") {
       // Handle successful update, e.g., show a success message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('업데이트 성공')),
       );
+      Navigator.pop(context); // Close confirmation dialog
     } else {
-      // Handle failure
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('업데이트 실패')),
+      // Handle failure: Show a pop-up alert and then go back
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('업데이트 실패'),
+            content: Text('오류 메시지: $responseString'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  // Close the dialog and pop the current screen
+                  Navigator.pop(context);  // Close the dialog
+                  // Navigator.pop(context);  // Go back to the previous screen (edit screen)
+                },
+                child: const Text('확인'),
+              ),
+            ],
+          );
+        },
       );
     }
-    Navigator.pop(context); // Close confirmation dialog
+    
     
     // Close the modal
     //Navigator.pop(context);
