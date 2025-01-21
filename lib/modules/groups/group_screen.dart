@@ -1,4 +1,4 @@
-import 'package:backoffice52switch/modules/groups/group_service.dart';
+
 import 'package:backoffice52switch/modules/shared/models/group.dart';
 import 'package:backoffice52switch/modules/shared/services/global_service.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +19,6 @@ class _GroupScreen extends StatefulWidget {
 
 class _GroupScreenState extends State<_GroupScreen> {
   final GlobalService _globalService = GlobalService();
-  final GroupService _groupService = GroupService();
   late Future<List<Group>> _futureData;
 
   ///get a response for search from service
@@ -90,7 +89,7 @@ class _GroupScreenState extends State<_GroupScreen> {
               },
             );
           } else {
-            return Center(child: Text('No data available'));
+            return const Center(child: Text('No data available'));
           }
         },
       ),
@@ -110,7 +109,7 @@ class RectangleAvatar extends StatelessWidget {
       color: Colors.blue,
       child: Text(
         group.groupName,
-        style: TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.white),
       ),
     );
   }
