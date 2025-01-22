@@ -232,7 +232,7 @@ class GlobalService {
       final result = await GraphQLService.query(
         query,
         //variables: variables,
-        fetchPolicy: FetchPolicy.networkOnly, // Force network fetch
+        fetchPolicy: FetchPolicy.networkOnly, // Force network fetch//
       );
       if (result.hasException) {
         LoggerConfig().logger.e('Query Exception: ${result.exception}');
