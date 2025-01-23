@@ -94,25 +94,16 @@ class _ShowRecordWidgetState extends State<ShowRecordWidget> {
   void _confirmChanges() {
     // Create a map to store updated data from the controllers
     final Map<String, dynamic> updatedData = {};
-    
     _controllers.forEach((key, controller) { ///////////////////////////////////postprocessing for backendquery_keyTypes[fieldName]=='refId'
-
-      
       // For int values, ensure that we parse the value correctly
       if (keyTypes[key]=='int') {
-        
         updatedData[key]  = int.tryParse(controller.text) ?? 0;
-      
       }else if (keyTypes[key]=='refId'||keyTypes[key]=='bool'||keyTypes[key]=='boolNullable') {
         updatedData[key]  = controller;
-      
       }else {//String
         updatedData[key]  = controller.text;
       }
-
-    
     });
-
     // Identify changed fields
     final changedFields = updatedData.entries.where((entry) {
       return widget.record?[entry.key] != entry.value;
@@ -122,7 +113,6 @@ class _ShowRecordWidgetState extends State<ShowRecordWidget> {
       for (var entry in changedFields)
         entry.key: entry.value,
     };
-
     // Show a confirmation dialog if changes exist
     if (changedFields.isNotEmpty) {
       showDialog(

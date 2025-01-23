@@ -183,6 +183,7 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
       ).then((_) {
         // After closing the dialog, re-fetch the collection data
         _fetchCollectionData(selectedCollection);
+        _fetchAllIndexData();
       });
     } else {
       // Show as a bottom sheet on mobile platforms
@@ -198,6 +199,7 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
       ).then((_) {
         // After closing the dialog, re-fetch the collection data
         _fetchCollectionData(selectedCollection);
+        _fetchAllIndexData();
       });
     }
   }
@@ -281,6 +283,7 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
         ).then((_) {
           // After closing the dialog, re-fetch the collection data
           _fetchCollectionData(selectedCollection);
+          _fetchAllIndexData();
         });
       } else {
         // Show as a bottom sheet on mobile platforms
@@ -297,6 +300,7 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
         ).then((_) {
           // After closing the bottom sheet, re-fetch the collection data
           _fetchCollectionData(selectedCollection);
+          _fetchAllIndexData();
         });
       }
     }
@@ -329,6 +333,7 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
     ).then((_) {
           // After closing the dialog, re-fetch the collection data
           _fetchCollectionData(selectedCollection);
+          _fetchAllIndexData();
     });
   
   }
@@ -373,6 +378,7 @@ class _SuperAdminScreenState extends State<_SuperAdminScreen> {
                                 _futureData =
                                     _fetchCollectionData(selectedCollection);
                                 getCollectionInfoMap(selectedCollection);
+                                _fetchAllIndexData();
                               });
                             },
                             items: collectionInfoMapList.map((collection) {
